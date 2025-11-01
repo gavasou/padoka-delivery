@@ -143,7 +143,7 @@ const BakeryDashboard: React.FC<BakeryAppProps> = ({ user, onLogout }) => {
         case 'deliveries':
             return <DeliveryManager user={user} />;
         case 'profile':
-            return <BakeryProfileScreen user={user} />;
+            return <BakeryProfileScreen user={user} onLogout={onLogout} />;
         default:
             return null;
     }

@@ -170,7 +170,7 @@ const ClientApp: React.FC<ClientAppProps> = ({ user, onLogout }) => {
     <div className="flex flex-col h-full bg-brand-background">
         {activePage !== 'profile' && <Header />}
         <main className="flex-1 overflow-y-auto pb-20">
-            {activePage === 'profile' ? <ProfileScreen user={user} /> : renderMainContent()}
+            {activePage === 'profile' ? <ProfileScreen user={user} onLogout={onLogout} /> : renderMainContent()}
         </main>
         <BottomNav items={CLIENT_NAV_ITEMS} activePage={activePage} setActivePage={setActivePage} />
     </div>

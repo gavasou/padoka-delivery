@@ -2,10 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import type { User, Bakery } from '../types';
 import { getBakeryById, updateBakeryProfile } from '../services/api';
-import { IconEdit, IconShieldCheck } from './StatIcons';
+import { IconEdit, IconShieldCheck, IconLogout, IconChevronRight } from './StatIcons';
 
 interface BakeryProfileScreenProps {
   user: User;
+  onLogout: () => void;
 }
 
 const TermsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => (
@@ -26,7 +27,7 @@ const TermsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => (
 );
 
 
-const BakeryProfileScreen: React.FC<BakeryProfileScreenProps> = ({ user }) => {
+const BakeryProfileScreen: React.FC<BakeryProfileScreenProps> = ({ user, onLogout }) => {
     const [owner, setOwner] = useState<User>(user);
     const [bakery, setBakery] = useState<Partial<Bakery>>({});
     const [loading, setLoading] = useState(true);
@@ -115,6 +116,14 @@ const BakeryProfileScreen: React.FC<BakeryProfileScreenProps> = ({ user }) => {
             
              <button onClick={() => setShowTerms(true)} className="w-full bg-white text-brand-secondary font-bold py-3 px-4 rounded-xl hover:bg-gray-50 transition-colors shadow-sm border border-gray-200/80 flex items-center justify-center gap-2">
                 <IconShieldCheck className="w-5 h-5"/> Ver Termos de Serviço
+            </button>
+
+            {/* Botão de Logout */}
+            <button 
+                onClick={onLogout} 
+                className="w-full bg-red-50 text-red-600 font-bold py-3 px-4 rounded-xl hover:bg-red-100 transition-colors shadow-sm border border-red-200/50 flex items-center justify-center gap-2"
+            >
+                <IconLogout className="w-5 h-5" /> Sair
             </button>
 
         </div>

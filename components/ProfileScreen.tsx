@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import type { User, FaqItem, Achievement, GalleryImage, ChatMessage } from '../types';
 import { 
     IconEdit, IconAward, IconCamera, IconHelpCircle, IconMessageCircle, IconChevronRight, 
-    IconChevronLeft, IconSend
+    IconChevronLeft, IconSend, IconLogout
 } from './StatIcons';
 import { 
     getClientFaqs, getClientAchievements, getGalleryImages, getClientChatMessages 
@@ -11,6 +11,7 @@ import {
 
 interface ProfileScreenProps {
   user: User;
+  onLogout: () => void;
 }
 
 const ProfileHeader: React.FC<{ user: User, onBack?: () => void, title: string }> = ({ user, onBack, title }) => (
@@ -24,7 +25,7 @@ const ProfileHeader: React.FC<{ user: User, onBack?: () => void, title: string }
     </header>
 );
 
-const ProfileScreen: React.FC<ProfileScreenProps> = ({ user }) => {
+const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onLogout }) => {
     const [view, setView] = useState('main');
     
     // Mock data state
@@ -85,6 +86,20 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ user }) => {
             {renderMenuItem(<IconCamera className="w-6 h-6" />, 'Galeria de Fotos', () => setView('gallery'))}
             {renderMenuItem(<IconHelpCircle className="w-6 h-6" />, 'Central de Ajuda', () => setView('faq'))}
             {renderMenuItem(<IconMessageCircle className="w-6 h-6" />, 'Falar com a Padaria', () => setView('chat'))}
+            
+            {/* Botão de Logout */}
+            <div className="pt-2">
+                <button 
+                    onClick={onLogout} 
+                    className="flex items-center w-full text-left p-4 bg-red-50 rounded-xl shadow-sm border border-red-200/50 active:scale-[0.98] transition-transform text-red-600"
+                >
+                    <div className="text-red-500 mr-4">
+                        <IconLogout className="w-6 h-6" />
+                    </div>
+                    <span className="flex-1 font-semibold">Sair</span>
+                    <IconChevronRight className="w-5 h-5 text-gray-400" />
+                </button>
+            </div>
         </div>
         </>
     );
