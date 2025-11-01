@@ -5,7 +5,7 @@
         "id": "1",
         "content": "Configurar backend e banco de dados Supabase",
         "details": "1. Configurar autenticação Supabase para replacing localStorage\n2. Criar tabelas: users, bakeries, products, subscriptions, deliveries, payments\n3. Configurar RLS (Row Level Security) para segurança\n4. Migrar dados mock para estrutura real",
-        "status": "in_progress",
+        "status": "completed",
         "priority": "high"
       },
       "2": {

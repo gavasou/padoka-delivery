@@ -1,103 +1,35 @@
+import { Database } from './supabase/types';
 
+// Extracted types from database schema
+export type User = Database['public']['Tables']['users']['Row'];
+export type Bakery = Database['public']['Tables']['bakeries']['Row'];
+export type Product = Database['public']['Tables']['products']['Row'];
+export type Subscription = Database['public']['Tables']['subscriptions']['Row'];
+export type Delivery = Database['public']['Tables']['deliveries']['Row'];
+export type Payment = Database['public']['Tables']['payments']['Row'];
+
+// Insert types for creating records
+export type UserInsert = Database['public']['Tables']['users']['Insert'];
+export type BakeryInsert = Database['public']['Tables']['bakeries']['Insert'];
+export type ProductInsert = Database['public']['Tables']['products']['Insert'];
+export type SubscriptionInsert = Database['public']['Tables']['subscriptions']['Insert'];
+export type DeliveryInsert = Database['public']['Tables']['deliveries']['Insert'];
+export type PaymentInsert = Database['public']['Tables']['payments']['Insert'];
+
+// Update types for modifying records
+export type UserUpdate = Database['public']['Tables']['users']['Update'];
+export type BakeryUpdate = Database['public']['Tables']['bakeries']['Update'];
+export type ProductUpdate = Database['public']['Tables']['products']['Update'];
+export type SubscriptionUpdate = Database['public']['Tables']['subscriptions']['Update'];
+export type DeliveryUpdate = Database['public']['Tables']['deliveries']['Update'];
+export type PaymentUpdate = Database['public']['Tables']['payments']['Update'];
+
+// Enums for better type safety
 export enum UserRole {
   CLIENT = 'client',
   BAKERY = 'bakery',
   DELIVERY = 'delivery',
   ADMIN = 'admin',
-}
-
-export interface GamificationStats {
-  level: string;
-  points: number;
-  nextLevelPoints: number;
-}
-
-export interface DeliveryPersonStats {
-    deliveriesMonth: number;
-    averageRating: number;
-    onTimeRate: number; // percentage
-    level: string;
-}
-
-export interface Achievement {
-    id: string;
-    icon: string; // emoji
-    title: string;
-    description: string;
-}
-
-export interface FaqItem {
-    id: string;
-    question: string;
-    answer: string;
-}
-
-export interface GalleryImage {
-    id: string;
-    imageUrl: string;
-    caption: string;
-    likes: number;
-}
-
-export interface ChatMessage {
-    id: string;
-    sender: 'user' | 'support' | 'bakery';
-    text: string;
-    timestamp: string;
-}
-
-export interface FeedPost {
-    id: string;
-    bakeryId: string;
-    bakeryName?: string; // For admin view
-    user: {
-        id: string;
-        name: string;
-        profileImageUrl: string;
-    };
-    imageUrl?: string;
-    caption: string;
-    rating: number;
-    createdAt: string;
-}
-
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: UserRole;
-  password?: string; // For mock auth
-  address?: string; // For clients/deliveries
-  vehicle?: 'moto' | 'bicicleta'; // For delivery personnel
-  phone?: string;
-  profileImageUrl?: string;
-  gamification?: GamificationStats;
-  deliveryStats?: DeliveryPersonStats;
-  status?: 'pending' | 'approved' | 'suspended';
-}
-
-export interface Product {
-  id: string;
-  name:string;
-  price: number;
-  imageUrl: string;
-  popularity?: 'high' | 'medium' | 'low';
-}
-
-export interface Bakery {
-  id: string;
-  name: string;
-  ownerId: string;
-  logoUrl: string;
-  address: string;
-  distance: number; // in km
-  rating: number;
-  products: Product[];
-  activeSubscriptions: number;
-  deliveryVehicle: 'moto' | 'bicicleta';
-  availablePackages?: PackageType[]; // Each bakery can now have specific packages
-  status?: 'pending' | 'approved' | 'suspended';
 }
 
 export enum PackageType {
@@ -107,120 +39,91 @@ export enum PackageType {
   MENSAL = 'Mensal',
 }
 
-
-export interface Subscription {
-  id: string;
-  userId: string;
-  bakeryId: string;
-  bakeryName: string;
-  plan: PackageType;
-  items: Product[];
-  status: 'Active' | 'Paused' | 'Cancelled';
-  nextDelivery: string;
-}
-
 export enum DeliveryStatus {
   PENDING = 'Pendente',
   DELIVERED = 'Entregue',
   RESCHEDULED = 'Reagendada',
 }
 
-export interface Delivery {
-  id: string;
-  subscriptionId: string;
-  customerName: string;
+export enum PaymentStatus {
+  APPROVED = 'Aprovada',
+  PENDING = 'Pendente',
+  DECLINED = 'Recusada',
+}
+
+// Extended types with computed fields
+export interface UserWithStats extends User {
+  gamification?: {
+    level: string;
+    points: number;
+    nextLevelPoints: number;
+  };
+  deliveryStats?: {
+    deliveriesMonth: number;
+    averageRating: number;
+    onTimeRate: number;
+    level: string;
+  };
+}
+
+export interface ProductWithPopularity extends Product {
+  popularity?: 'high' | 'medium' | 'low';
+}
+
+export interface SubscriptionWithDetails extends Subscription {
+  products?: Product[];
+  bakery?: Bakery;
+  user?: User;
+}
+
+export interface DeliveryWithDetails extends Delivery {
+  subscription?: Subscription;
+  products?: Product[];
+}
+
+// Utility types for form submissions
+export interface CreateUserData {
+  name: string;
+  email: string;
+  role: UserRole;
+  password?: string;
+  address?: string;
+  phone?: string;
+  vehicle?: 'moto' | 'bicicleta';
+}
+
+export interface CreateBakeryData {
+  name: string;
+  latitude: number;
+  longitude: number;
   address: string;
-  timeSlot: string;
-  status: DeliveryStatus;
-  items: Product[]; // Products included in the delivery
-  date?: string;
-  rating?: number;
-  customerFeedback?: string;
+  logo_url?: string;
+  delivery_vehicle: 'moto' | 'bicicleta';
 }
 
-// Data type for the new bakery revenue chart
-export interface WeeklyRevenue {
-    day: string;
-    Receita: number;
+export interface CreateProductData {
+  name: string;
+  price: number;
+  image_url?: string;
+  description?: string;
+  popularity?: 'high' | 'medium' | 'low';
+  padaria_id: string;
 }
 
-// Data type for the admin dashboard
-export interface PlatformStats {
-    totalRevenue: number;
-    appCommission: number;
-    payoutsToBakeries: number;
-    activeSubscriptions: number;
-    totalBakeries: number;
-    totalClients: number;
+export interface CreateSubscriptionData {
+  cliente_id: string;
+  padaria_id: string;
+  plan: PackageType;
+  preco_total: number;
+  next_delivery: string;
+  bakery_name: string;
 }
 
-// Data types for new Admin features
-export interface MarketingCampaign {
-    id: string;
-    productId: string;
-    productName: string;
-    bakeryName: string;
-    startDate: string;
-    endDate: string;
-    status: 'Ativa' | 'Agendada' | 'Concluída';
-    views: number;
-    clicks: number;
-}
-
-export interface AppNotification {
-    id: string;
-    message: string;
-    segment: string;
-    sentAt: string;
-    opens: number;
-    clicks: number;
-}
-
-export interface AIMarketingSuggestion {
-    title: string;
-    description: string;
-    productName: string;
-}
-
-// Payment Management Types
-export interface PaymentGateway {
-    id: string;
-    name: string;
-    apiKey: string;
-    status: 'active' | 'inactive';
-}
-
-export interface PaymentTransaction {
-    id: string;
-    clientName: string;
-    amount: number;
-    method: string;
-    status: 'Aprovada' | 'Pendente' | 'Recusada';
-    date: string;
-}
-
-export interface PaymentStats {
-    revenueToday: number;
-    approvedTransactions: number;
-    failedTransactions: number;
-}
-
-// Type for the final receipt
-export interface ReceiptData {
-    orderId: string;
-    date: string;
-    bakery: Bakery;
-    basket: { [productId: string]: { product: Product; quantity: number } };
-    package: {
-        type: PackageType;
-        days: number;
-    };
-    costs: {
-        totalItemCost: number;
-        totalDeliveryFee: number;
-        serviceFee: number;
-        discount: number;
-        finalTotal: number;
-    };
-    paymentMethod: string;
+export interface CreatePaymentData {
+  client_name: string;
+  amount: number;
+  method: string;
+  status: PaymentStatus;
+  pedido_id: string;
+  stripe_payment_intent_id?: string;
 }
