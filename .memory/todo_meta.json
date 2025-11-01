@@ -1,0 +1,48 @@
+{
+  "todos": {
+    "Coordinator": {
+      "1": {
+        "id": "1",
+        "content": "Configurar backend e banco de dados Supabase",
+        "details": "1. Configurar autenticação Supabase para replacing localStorage\n2. Criar tabelas: users, bakeries, products, subscriptions, deliveries, payments\n3. Configurar RLS (Row Level Security) para segurança\n4. Migrar dados mock para estrutura real",
+        "status": "pending",
+        "priority": "high"
+      },
+      "2": {
+        "id": "2",
+        "content": "Implementar sistema de pagamentos",
+        "details": "1. Configurar Stripe para pagamentos com cartão\n2. Implementar PIX como método de pagamento brasileiro\n3. Criar webhooks para confirmação de pagamentos\n4. Sistema de recorrência para assinaturas mensais",
+        "status": "pending",
+        "priority": "high"
+      },
+      "3": {
+        "id": "3",
+        "content": "Configurar geolocalização e mapas",
+        "details": "1. Integrar Google Maps API para localização de padarias\n2. Implementar cálculo de distância para entregas\n3. Geocodificação de endereços\n4. Rastreamento de entregas em tempo real",
+        "status": "pending",
+        "priority": "medium"
+      },
+      "4": {
+        "id": "4",
+        "content": "Otimizar projeto para produção",
+        "details": "1. Configurar build de produção\n2. Otimizar bundle size\n3. Configurar PWA (Progressive Web App)\n4. Implementar service workers para cache",
+        "status": "pending",
+        "priority": "medium"
+      },
+      "5": {
+        "id": "5",
+        "content": "Configurar hospedagem e deploy",
+        "details": "1. Deploy frontend em Vercel/Netlify\n2. Configurar domínio personalizado\n3. Configurar SSL/HTTPS\n4. Deploy das edge functions Supabase\n5. Configurar variáveis de ambiente de produção",
+        "status": "pending",
+        "priority": "high"
+      },
+      "6": {
+        "id": "6",
+        "content": "Implementar integrações adicionais",
+        "details": "1. Sistema de notificações push\n2. Integração com WhatsApp Business API\n3. Sistema de avaliações e feedback\n4. Analytics e métricas de uso\n5. Backup e monitoramento",
+        "status": "pending",
+        "priority": "low"
+      }
+    }
+  }
+}

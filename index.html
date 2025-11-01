@@ -1,0 +1,210 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Padoka - Assinaturas de Padarias</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'brand-primary': '#F9B400', // PDK golden yellow
+              'brand-secondary': '#6B522A', // Toasted bread brown
+              'brand-background': '#FFF9EF', // Light beige background
+              'brand-text': '#3A2A0F', // Dark brown main text
+              'brand-text-secondary': '#8B7A5C', // Lighter secondary text
+            },
+            borderRadius: {
+              'xl': '1rem', // 16px
+              '2xl': '1.5rem',
+            },
+            fontFamily: {
+              sans: ['Poppins', 'sans-serif'],
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+      /* 🌾 Padoka PDK Theme - Estilo artesanal e moderno */
+
+      /* Paleta base extraída da logo */
+      :root {
+        --pdk-yellow: #F9B400;    /* cor principal */
+        --pdk-brown: #6B522A;     /* cor secundária */
+        --pdk-beige: #FFF9EF;     /* fundo aconchegante */
+        --pdk-text-dark: #3A2A0F; /* textos fortes */
+        --pdk-text-soft: #8B7A5C; /* textos secundários */
+        --pdk-white: #FFFFFF;
+      }
+
+      /* Corpo geral */
+      body {
+        background-color: var(--pdk-beige);
+        color: var(--pdk-text-dark);
+        font-family: 'Poppins', 'Nunito', sans-serif;
+      }
+
+      /* 🧈 Botões */
+      button {
+        border-radius: 12px;
+        padding: 14px 20px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        box-shadow: 0 3px 6px rgba(107, 82, 42, 0.1);
+        border: none;
+      }
+
+      button.primary {
+        background-color: var(--pdk-yellow);
+        color: var(--pdk-brown);
+      }
+
+      button.primary:hover {
+        background-color: #e0a300;
+      }
+
+      button.secondary {
+        background-color: var(--pdk-brown);
+        color: var(--pdk-white);
+      }
+
+      button.secondary:hover {
+        opacity: 0.9;
+      }
+
+      /* 🧺 Cards gerais */
+      .card {
+        background-color: var(--pdk-white);
+        border-radius: 16px;
+        box-shadow: 0 4px 10px rgba(107, 82, 42, 0.1);
+        padding: 16px;
+        margin: 10px 0;
+      }
+
+      /* 🥐 Inputs */
+      input, select, textarea {
+        border: 1px solid var(--pdk-yellow);
+        border-radius: 10px;
+        padding: 12px;
+        background-color: var(--pdk-white);
+        color: var(--pdk-text-dark);
+        font-size: 16px;
+        width: 100%;
+      }
+
+      input:focus, select:focus, textarea:focus {
+        outline: 2px solid var(--pdk-yellow);
+      }
+      
+      textarea {
+        resize: vertical;
+      }
+
+      /* 🏠 Navbar inferior */
+      .navbar {
+        background-color: var(--pdk-white);
+        border-top: 1px solid var(--pdk-yellow);
+        display: flex;
+        justify-content: space-around;
+        padding: 12px 0;
+      }
+
+      .navbar-item {
+        color: var(--pdk-brown);
+        font-weight: 500;
+        text-align: center;
+      }
+
+      .navbar-item.active {
+        color: var(--pdk-yellow);
+      }
+
+      /* 🍞 Header */
+      .header {
+        background-color: var(--pdk-yellow);
+        color: var(--pdk-brown);
+        font-size: 20px;
+        font-weight: 700;
+        padding: 16px;
+        border-radius: 0 0 20px 20px;
+        text-align: center;
+      }
+
+      /* ☀️ Mensagens e alertas */
+      .alert {
+        background-color: #FFF2CC;
+        color: var(--pdk-brown);
+        border-left: 5px solid var(--pdk-yellow);
+        padding: 12px;
+        border-radius: 10px;
+        margin: 10px 0;
+      }
+
+      /* 🧁 Badges de status */
+      .badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      .badge.pendente { background-color: #FFE082; color: var(--pdk-brown); }
+      .badge.entregue { background-color: #C8E6C9; color: #2E7D32; }
+      .badge.reagendada { background-color: #FFECB3; color: #8D6E63; }
+
+      /* ✨ Animações */
+      .fade-in {
+        animation: fadeIn 0.4s ease-in-out;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      
+      @keyframes bounceIn {
+          0% { opacity: 0; transform: scale(0.3) translateY(20px); }
+          50% { opacity: 0.9; transform: scale(1.05); }
+          70% { transform: scale(0.9); }
+          100% { opacity: 1; transform: scale(1) translateY(0); }
+      }
+      .animate-bounce-in {
+          animation: bounceIn 1s ease-out forwards;
+      }
+      @keyframes pulseHeart {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+          100% { transform: scale(1); }
+      }
+      .animate-pulse-heart {
+          animation: pulseHeart 1.5s ease-in-out 1s infinite;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.28.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-brand-background font-sans">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
