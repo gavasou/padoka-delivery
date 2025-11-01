@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import type { User } from './types';
 import { UserRole } from './types';
+import { supabase } from './services/supabase';
+import { getCurrentUser, logout as supabaseLogout } from './services/supabaseApi';
 
 // NOTE: Component files have been repurposed to build the new application
 // as per the user's request, while adhering to the existing file structure.
@@ -18,18 +20,16 @@ const App: React.FC = () => {
   const [showSplash, setShowSplash] = useState(true);
 
   useEffect(() => {
-    // Simulate checking for a logged-in user in localStorage
-    const checkUser = () => {
+    // Check for authenticated user from Supabase
+    const checkUser = async () => {
       try {
-        const storedUser = localStorage.getItem('padoka_user');
-        if (storedUser) {
-          setCurrentUser(JSON.parse(storedUser));
-        }
+        const user = await getCurrentUser();
+        setCurrentUser(user);
       } catch (error) {
-        console.error("Failed to parse user from localStorage", error);
-        localStorage.removeItem('padoka_user');
+        console.error("Failed to get current user", error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     
     // Keep splash for at least 3 seconds
@@ -39,16 +39,29 @@ const App: React.FC = () => {
     
     checkUser();
 
-    return () => clearTimeout(splashTimer);
+    // Set up auth listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (session?.user) {
+          getCurrentUser().then(setCurrentUser);
+        } else {
+          setCurrentUser(null);
+        }
+      }
+    );
+
+    return () => {
+      clearTimeout(splashTimer);
+      subscription.unsubscribe();
+    };
   }, []);
 
   const handleLogin = (user: User) => {
-    localStorage.setItem('padoka_user', JSON.stringify(user));
     setCurrentUser(user);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('padoka_user');
+  const handleLogout = async () => {
+    await supabaseLogout();
     setCurrentUser(null);
   };
 

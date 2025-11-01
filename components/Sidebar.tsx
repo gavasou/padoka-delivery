@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { login, register } from '../services/api';
+import { login, register } from '../services/supabaseApi';
 import type { User } from '../types';
 import { UserRole } from '../types';
 import { IconBread, IconBuildingStore, IconMotorbike } from './StatIcons'; // Repurposed StatIcons
@@ -50,8 +50,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
     if (roleToLogin === UserRole.CLIENT) demoEmail = 'cliente@padoka.com';
     if (roleToLogin === UserRole.BAKERY) demoEmail = 'padaria@padoka.com';
     if (roleToLogin === UserRole.DELIVERY) demoEmail = 'entregador@padoka.com';
+    if (roleToLogin === UserRole.ADMIN) demoEmail = 'admin@padoka.com';
     setEmail(demoEmail);
-    setPassword('123');
+    setPassword('Padoka2025!');
   }
 
   const handleSubmit = async (e: React.FormEvent, isAdminLogin = false) => {
@@ -60,7 +61,15 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
     try {
       let user;
       if (isRegister && !isAdminLogin) {
-        user = await register(name, email, password, role);
+        user = await register(name, email, password, role, {
+          phone: '',
+          address: '',
+          vehicle: role === UserRole.DELIVERY ? 'moto' : undefined
+        });
+        if (user && user.status === 'pending') {
+          setError('Cadastro realizado! Aguardando aprovação do administrador.');
+          return;
+        }
       } else {
         user = await login(email, password);
       }
@@ -74,8 +83,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
       } else {
         setError('Credenciais inválidas ou usuário não encontrado.');
       }
-    } catch (err) {
-      setError('Ocorreu um erro. Tente novamente.');
+    } catch (err: any) {
+      setError(err.message || 'Ocorreu um erro. Tente novamente.');
     }
   };
   
