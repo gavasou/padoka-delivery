@@ -5,7 +5,7 @@ import { toast, Toaster } from 'react-hot-toast';
 import type { Bakery, Product, PackageType, ReceiptData, User } from '../types';
 import { IconChevronLeft, IconCreditCard, IconPix, IconBarcode, IconWallet, IconCheckCircle } from './StatIcons';
 import { calculateDeliveryFee, calculateServiceFee } from '../services/feeService';
-import { getStripe, createStripeSubscription } from '../services/stripeService';
+import { getStripe, createStripeSubscription, createStripePayment } from '../services/stripeService';
 
 type Basket = { [productId: string]: { product: Product; quantity: number } };
 
@@ -30,10 +30,10 @@ const PACKAGE_TO_STRIPE_PLAN = {
 } as const;
 
 const PAYMENT_METHODS = [
-    { id: 'credit_card', label: 'Cartão de Crédito', icon: <IconCreditCard className="w-6 h-6" /> },
-    { id: 'pix', label: 'Pix', icon: <IconPix className="w-6 h-6" /> },
-    { id: 'boleto', label: 'Boleto Bancário', icon: <IconBarcode className="w-6 h-6" /> },
-    { id: 'wallet', label: 'Carteiras Digitais', icon: <IconWallet className="w-6 h-6" /> },
+    { id: 'credit_card', label: 'Cartão de Crédito', icon: <IconCreditCard className="w-6 h-6" />, type: 'subscription' },
+    { id: 'pix', label: 'Pix', icon: <IconPix className="w-6 h-6" />, type: 'one_time' },
+    { id: 'boleto', label: 'Boleto Bancário', icon: <IconBarcode className="w-6 h-6" />, type: 'one_time' },
+    { id: 'wallet', label: 'Carteiras Digitais', icon: <IconWallet className="w-6 h-6" />, type: 'one_time' },
 ];
 
 const PaymentScreen: React.FC<PaymentScreenProps> = ({ user, bakery, basket, selectedPackage, packageDetails, onBack, onPaymentSuccess }) => {
@@ -122,36 +122,58 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ user, bakery, basket, sel
         setPaymentStep('processing');
         
         try {
-            // Mapear o tipo de pacote para o plano do Stripe
-            const stripePlan = PACKAGE_TO_STRIPE_PLAN[selectedPackage as keyof typeof PACKAGE_TO_STRIPE_PLAN];
-            if (!stripePlan) {
-                throw new Error('Tipo de pacote não suportado');
-            }
+            const selectedPaymentMethod = PAYMENT_METHODS.find(m => m.id === selectedMethod);
+            
+            if (selectedPaymentMethod?.type === 'subscription') {
+                // Para cartão de crédito - criar assinatura recorrente
+                const stripePlan = PACKAGE_TO_STRIPE_PLAN[selectedPackage as keyof typeof PACKAGE_TO_STRIPE_PLAN];
+                if (!stripePlan) {
+                    throw new Error('Tipo de pacote não suportado');
+                }
 
-            // Criar assinatura Stripe
-            const result = await createStripeSubscription(
-                user.id,
-                bakery.id,
-                stripePlan,
-                Object.values(basket),
-                user.email,
-                user.name
-            );
+                const result = await createStripeSubscription(
+                    user.id,
+                    bakery.id,
+                    stripePlan,
+                    Object.values(basket),
+                    user.email,
+                    user.name
+                );
 
-            if (result.checkoutUrl) {
-                toast.success('Redirecionando para o checkout...');
-                // Redirecionar para o checkout do Stripe
-                window.location.href = result.checkoutUrl;
+                if (result.checkoutUrl) {
+                    toast.success('Redirecionando para o checkout...');
+                    window.location.href = result.checkoutUrl;
+                } else {
+                    throw new Error('URL de checkout não retornada');
+                }
             } else {
-                throw new Error('URL de checkout não retornada');
+                // Para PIX, boleto e carteiras - pagamento único
+                const paymentMethodType = selectedMethod === 'credit_card' ? 'card' : selectedMethod;
+                
+                const result = await createStripePayment(
+                    user.id,
+                    bakery.id,
+                    selectedPackage,
+                    finalTotal,
+                    user.email,
+                    user.name,
+                    paymentMethodType
+                );
+
+                if (result.checkoutUrl) {
+                    toast.success(`Redirecionando para pagamento via ${selectedPaymentMethod?.label}...`);
+                    window.location.href = result.checkoutUrl;
+                } else {
+                    throw new Error('URL de checkout não retornada');
+                }
             }
 
         } catch (error: any) {
-            console.error('Stripe payment error:', error);
+            console.error('Payment error:', error);
             toast.error(error.message || 'Falha no pagamento. Tente novamente.');
             setPaymentStep('method_selection');
         }
-    }, [selectedPackage, user, bakery.id, basket]);
+    }, [selectedMethod, selectedPackage, user, bakery.id, basket, finalTotal]);
 
     // FIX: Moved useEffect to the top level of the component to follow the Rules of Hooks.
     useEffect(() => {
@@ -245,7 +267,21 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ user, bakery, basket, sel
                                 className={`flex items-center w-full text-left p-4 rounded-xl border-2 transition-all ${selectedMethod === method.id ? 'border-brand-primary bg-brand-primary/10' : 'border-gray-200 bg-white'}`}
                             >
                                 <div className="text-brand-secondary mr-4">{method.icon}</div>
-                                <span className="flex-1 font-semibold text-brand-text">{method.label}</span>
+                                <div className="flex-1">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <span className="font-semibold text-brand-text">{method.label}</span>
+                                        {method.type === 'subscription' ? 
+                                            <span className="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded-full">Recorrente</span> :
+                                            <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">Único</span>
+                                        }
+                                    </div>
+                                    <span className="text-xs text-brand-text-secondary">
+                                        {method.id === 'pix' && 'Confirmação em até 2 horas • Instantâneo'}
+                                        {method.id === 'boleto' && 'Confirmação em até 3 dias úteis'}
+                                        {method.id === 'credit_card' && 'Renovação automática • Cancele quando quiser'}
+                                        {method.id === 'wallet' && 'Mercado Pago, PicPay e outros'}
+                                    </span>
+                                </div>
                                 <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedMethod === method.id ? 'border-brand-primary' : 'border-gray-300'}`}>
                                     {selectedMethod === method.id && <div className="w-2.5 h-2.5 bg-brand-primary rounded-full" />}
                                 </div>
@@ -258,28 +294,59 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ user, bakery, basket, sel
             case 'card_form':
                  return (
                     <>
-                    {renderHeader("Pagamento por Assinatura", () => setPaymentStep('method_selection'))}
-                    <ViewContainer showFooter={true} footerButtonText="Confirmar Assinatura" onFooterClick={handleStripePayment}>
+                    {renderHeader(
+                        selectedMethod === 'credit_card' ? "Pagamento por Assinatura" :
+                        selectedMethod === 'pix' ? "Pagamento via PIX" :
+                        selectedMethod === 'boleto' ? "Pagamento via Boleto" :
+                        "Confirmar Pagamento",
+                        () => setPaymentStep('method_selection')
+                    )}
+                    <ViewContainer showFooter={true} footerButtonText={
+                        selectedMethod === 'credit_card' ? "Confirmar Assinatura" :
+                        selectedMethod === 'pix' ? "Confirmar PIX" :
+                        selectedMethod === 'boleto' ? "Confirmar Boleto" :
+                        "Confirmar Pagamento"
+                    } onFooterClick={handleStripePayment}>
                         <div className="bg-white p-4 rounded-xl space-y-4">
                             <div className="text-center mb-6">
-                                <h3 className="font-bold text-lg text-brand-text mb-2">Assinatura {selectedPackage}</h3>
-                                <p className="text-brand-text-secondary">Você será redirecionado para o checkout seguro do Stripe</p>
+                                <h3 className="font-bold text-lg text-brand-text mb-2">
+                                    {selectedMethod === 'credit_card' ? 
+                                        `Assinatura ${selectedPackage}` : 
+                                        `Pagamento ${selectedPackage}`
+                                    }
+                                </h3>
+                                <p className="text-brand-text-secondary">
+                                    {selectedMethod === 'credit_card' ? 
+                                        'Você será redirecionado para o checkout seguro do Stripe' :
+                                        `Pagamento via ${PAYMENT_METHODS.find(m => m.id === selectedMethod)?.label} - Redirecionamento seguro`
+                                    }
+                                </p>
                             </div>
                             
                             <div className="bg-blue-50 p-4 rounded-lg">
-                                <h4 className="font-semibold text-brand-text mb-2">Detalhes da Assinatura:</h4>
+                                <h4 className="font-semibold text-brand-text mb-2">Detalhes do Pagamento:</h4>
                                 <ul className="text-sm text-brand-text-secondary space-y-1">
-                                    <li>• {packageDetails.isRecurring ? 'Cobrança recorrente' : 'Pagamento único'}</li>
+                                    <li>• {selectedMethod === 'credit_card' ? 
+                                        (packageDetails.isRecurring ? 'Cobrança recorrente' : 'Pagamento único') :
+                                        'Pagamento único'
+                                    }</li>
                                     <li>• Entrega por {packageDetails.days} dias</li>
-                                    <li>• Cancele a qualquer momento</li>
-                                    <li>• Pagamento seguro via Stripe</li>
+                                    <li>• {selectedMethod === 'credit_card' ? 'Cancele a qualquer momento' : 'Confirmação instantânea'}</li>
+                                    <li>• Pagamento seguro via Stripe Brasil</li>
+                                    {selectedMethod === 'pix' && <li>• PIX: Confirmação em até 2 horas</li>}
+                                    {selectedMethod === 'boleto' && <li>• Boleto: Confirmação em até 3 dias úteis</li>}
                                 </ul>
                             </div>
                             
                             <div className="bg-green-50 p-4 rounded-lg">
-                                <h4 className="font-semibold text-brand-text mb-2">Total da Assinatura:</h4>
+                                <h4 className="font-semibold text-brand-text mb-2">Total do Pagamento:</h4>
                                 <p className="text-2xl font-bold text-green-600">R$ {finalTotal.toFixed(2)}</p>
-                                <p className="text-sm text-brand-text-secondary">{packageDetails.isRecurring ? 'Por período' : 'Pagamento único'}</p>
+                                <p className="text-sm text-brand-text-secondary">
+                                    {selectedMethod === 'credit_card' && packageDetails.isRecurring ? 'Por período' : 'Pagamento único'}
+                                </p>
+                                {selectedMethod === 'pix' && (
+                                    <p className="text-xs text-blue-600 mt-2">PIX: Desconto especial já aplicado!</p>
+                                )}
                             </div>
                         </div>
                     </ViewContainer>

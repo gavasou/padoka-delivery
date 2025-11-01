@@ -110,7 +110,7 @@ export let MOCK_BAKERIES: Bakery[] = [
     ],
     activeSubscriptions: 89,
     deliveryVehicle: 'moto',
-    availablePackages: [PackageType.DIARIO_AVULSO, PackageType.SEMANAL],
+    availablePackages: [PackageType.DIARIO_AVULSO, PackageType.SEMANAL, PackageType.QUINZENAL, PackageType.MENSAL],
     status: 'approved',
   },
   { 
@@ -128,7 +128,7 @@ export let MOCK_BAKERIES: Bakery[] = [
     ],
     activeSubscriptions: 210,
     deliveryVehicle: 'bicicleta',
-    availablePackages: [PackageType.SEMANAL, PackageType.QUINZENAL, PackageType.MENSAL],
+    availablePackages: [PackageType.DIARIO_AVULSO, PackageType.SEMANAL, PackageType.QUINZENAL, PackageType.MENSAL],
     status: 'approved',
   },
   { 

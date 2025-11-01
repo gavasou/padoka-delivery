@@ -152,6 +152,8 @@ Deno.serve(async (req) => {
     const checkoutParams = new URLSearchParams({
       customer: customerId, mode: 'subscription',
       'line_items[0][price]': priceId, 'line_items[0][quantity]': '1',
+      'payment_method_types[0]': 'card',
+      'payment_method_types[1]': 'boleto',
       success_url: `${origin}/dashboard?subscription=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/pricing?subscription=cancelled`,
       'metadata[user_id]': userId || '', 'metadata[plan_type]': planType

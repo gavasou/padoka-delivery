@@ -39,20 +39,31 @@ export const createStripeSubscription = async (
     }
 };
 
-export const confirmStripePayment = async (clientSecret: string) => {
+export const createStripePayment = async (
+    userId: string,
+    bakeryId: string,
+    packageType: string,
+    totalAmount: number,
+    customerEmail: string,
+    customerName: string,
+    paymentMethod: string = 'pix'
+) => {
     try {
-        const stripe = await getStripe();
-        if (!stripe) throw new Error('Stripe não inicializado');
+        const { data, error } = await supabase.functions.invoke('create-payment', {
+            body: {
+                planType: packageType.toLowerCase().replace(' ', '_'),
+                customerEmail,
+                customerName,
+                paymentMethod,
+                totalAmount
+            }
+        });
 
-        const { error } = await stripe.confirmCardPayment(clientSecret);
+        if (error) throw error;
 
-        if (error) {
-            throw new Error(error.message);
-        }
-
-        return { success: true };
+        return data.data;
     } catch (error: any) {
-        console.error('Payment confirmation error:', error);
-        throw error;
+        console.error('Stripe payment error:', error);
+        throw new Error(error.message || 'Falha ao criar pagamento');
     }
 };
