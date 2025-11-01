@@ -1,7 +1,8 @@
 import { supabase } from './supabase';
 import { loadStripe, Stripe } from '@stripe/stripe-js';
 
-const STRIPE_PUBLISHABLE_KEY = "pk_test_51QRGvkHZlSuemtbDELGp9VrL7EHqQTv8NaKkDFk3HZVywvbrzXkrDHSrq8YwqU2uYTy7h3GYZ3gVUMHOF0DoDPrP00fNJn5gxM";
+// Usar a chave que já está hardcoded como fallback, mas idealmente seria via env
+const STRIPE_PUBLISHABLE_KEY = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "pk_test_51QRGvkHZlSuemtbDELGp9VrL7EHqQTv8NaKkDFk3HZVywvbrzXkrDHSrq8YwqU2uYTy7h3GYZ3gVUMHOF0DoDPrP00fNJn5gxM";
 
 let stripePromise: Promise<Stripe | null>;
 

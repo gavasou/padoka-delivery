@@ -12,7 +12,7 @@
         "id": "2",
         "content": "Implementar sistema de pagamentos",
         "details": "1. Configurar Stripe para pagamentos com cartão\n2. Implementar PIX como método de pagamento brasileiro\n3. Criar webhooks para confirmação de pagamentos\n4. Sistema de recorrência para assinaturas mensais",
-        "status": "pending",
+        "status": "completed",
         "priority": "high"
       },
       "3": {

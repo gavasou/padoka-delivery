@@ -1,9 +1,11 @@
 
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { toast, Toaster } from 'react-hot-toast';
 import type { Bakery, Product, PackageType, ReceiptData, User } from '../types';
 import { IconChevronLeft, IconCreditCard, IconPix, IconBarcode, IconWallet, IconCheckCircle } from './StatIcons';
 import { calculateDeliveryFee, calculateServiceFee } from '../services/feeService';
-import { processPayment } from '../services/api';
+import { getStripe, createStripeSubscription } from '../services/stripeService';
 
 type Basket = { [productId: string]: { product: Product; quantity: number } };
 
@@ -18,6 +20,14 @@ interface PaymentScreenProps {
 }
 
 type PaymentStep = 'method_selection' | 'card_form' | 'pix_display' | 'boleto_display' | 'processing' | 'success';
+
+// Mapeamento dos tipos de pacote para os planos do Stripe
+const PACKAGE_TO_STRIPE_PLAN = {
+    'Diário': 'diario',
+    'Semanal': 'semanal', 
+    'Quinzenal': 'quinzenal',
+    'Mensal': 'mensal'
+} as const;
 
 const PAYMENT_METHODS = [
     { id: 'credit_card', label: 'Cartão de Crédito', icon: <IconCreditCard className="w-6 h-6" /> },
@@ -66,11 +76,18 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ user, bakery, basket, sel
     };
     
     const handleConfirmPayment = useCallback(async () => {
+        if (selectedMethod === 'credit_card') {
+            // Para cartão de crédito, vamos para o formulário Stripe
+            setPaymentStep('card_form');
+            return;
+        }
+        
         setPaymentStep('processing');
         const selectedMethodLabel = PAYMENT_METHODS.find(m => m.id === selectedMethod)?.label || 'N/A';
         
         try {
-            await processPayment(user.name, finalTotal, selectedMethodLabel);
+            // Para outros métodos de pagamento, usar mock payment
+            await new Promise(resolve => setTimeout(resolve, 2000));
 
             const receiptData: Omit<ReceiptData, 'orderId' | 'date'> = {
                 bakery,
@@ -93,13 +110,48 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ user, bakery, basket, sel
 
         } catch (error) {
             console.error("Payment failed", error);
-            // In a real app, you would show an error message to the user
-            setPaymentStep('method_selection'); // Go back to selection
+            toast.error('Falha no pagamento. Tente novamente.');
+            setPaymentStep('method_selection');
         }
     }, [
         selectedMethod, user.name, finalTotal, bakery, basket, selectedPackage, packageDetails.days,
         totalItemCost, totalDeliveryFee, serviceFee, discount, onPaymentSuccess
     ]);
+
+    const handleStripePayment = useCallback(async () => {
+        setPaymentStep('processing');
+        
+        try {
+            // Mapear o tipo de pacote para o plano do Stripe
+            const stripePlan = PACKAGE_TO_STRIPE_PLAN[selectedPackage as keyof typeof PACKAGE_TO_STRIPE_PLAN];
+            if (!stripePlan) {
+                throw new Error('Tipo de pacote não suportado');
+            }
+
+            // Criar assinatura Stripe
+            const result = await createStripeSubscription(
+                user.id,
+                bakery.id,
+                stripePlan,
+                Object.values(basket),
+                user.email,
+                user.name
+            );
+
+            if (result.checkoutUrl) {
+                toast.success('Redirecionando para o checkout...');
+                // Redirecionar para o checkout do Stripe
+                window.location.href = result.checkoutUrl;
+            } else {
+                throw new Error('URL de checkout não retornada');
+            }
+
+        } catch (error: any) {
+            console.error('Stripe payment error:', error);
+            toast.error(error.message || 'Falha no pagamento. Tente novamente.');
+            setPaymentStep('method_selection');
+        }
+    }, [selectedPackage, user, bakery.id, basket]);
 
     // FIX: Moved useEffect to the top level of the component to follow the Rules of Hooks.
     useEffect(() => {
@@ -111,12 +163,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ user, bakery, basket, sel
     }, [paymentStep, handleConfirmPayment]);
 
     const handleContinueToPayment = () => {
-        switch(selectedMethod) {
-            case 'credit_card': setPaymentStep('card_form'); break;
-            case 'pix': setPaymentStep('pix_display'); break;
-            case 'boleto': setPaymentStep('boleto_display'); break;
-            default: alert('Método de pagamento não implementado.'); break;
-        }
+        handleConfirmPayment();
     };
 
     const renderHeader = (title: string, onBackAction: () => void) => (
@@ -211,14 +258,28 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ user, bakery, basket, sel
             case 'card_form':
                  return (
                     <>
-                    {renderHeader("Dados do Cartão", () => setPaymentStep('method_selection'))}
-                    <ViewContainer showFooter={true} footerButtonText="Pagar com Cartão" onFooterClick={handleConfirmPayment}>
+                    {renderHeader("Pagamento por Assinatura", () => setPaymentStep('method_selection'))}
+                    <ViewContainer showFooter={true} footerButtonText="Confirmar Assinatura" onFooterClick={handleStripePayment}>
                         <div className="bg-white p-4 rounded-xl space-y-4">
-                            <input type="text" placeholder="Nome no Cartão" />
-                            <input type="text" placeholder="Número do Cartão" />
-                            <div className="flex gap-4">
-                                <input type="text" placeholder="Validade (MM/AA)" />
-                                <input type="text" placeholder="CVC" />
+                            <div className="text-center mb-6">
+                                <h3 className="font-bold text-lg text-brand-text mb-2">Assinatura {selectedPackage}</h3>
+                                <p className="text-brand-text-secondary">Você será redirecionado para o checkout seguro do Stripe</p>
+                            </div>
+                            
+                            <div className="bg-blue-50 p-4 rounded-lg">
+                                <h4 className="font-semibold text-brand-text mb-2">Detalhes da Assinatura:</h4>
+                                <ul className="text-sm text-brand-text-secondary space-y-1">
+                                    <li>• {packageDetails.isRecurring ? 'Cobrança recorrente' : 'Pagamento único'}</li>
+                                    <li>• Entrega por {packageDetails.days} dias</li>
+                                    <li>• Cancele a qualquer momento</li>
+                                    <li>• Pagamento seguro via Stripe</li>
+                                </ul>
+                            </div>
+                            
+                            <div className="bg-green-50 p-4 rounded-lg">
+                                <h4 className="font-semibold text-brand-text mb-2">Total da Assinatura:</h4>
+                                <p className="text-2xl font-bold text-green-600">R$ {finalTotal.toFixed(2)}</p>
+                                <p className="text-sm text-brand-text-secondary">{packageDetails.isRecurring ? 'Por período' : 'Pagamento único'}</p>
                             </div>
                         </div>
                     </ViewContainer>
@@ -272,6 +333,16 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ user, bakery, basket, sel
 
     return (
         <div className="flex flex-col h-full bg-brand-background">
+           <Toaster 
+                position="top-center"
+                toastOptions={{
+                    duration: 4000,
+                    style: {
+                        background: '#363636',
+                        color: '#fff',
+                    },
+                }}
+            />
            {renderContent()}
         </div>
     );

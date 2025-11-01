@@ -5,6 +5,7 @@ import { PackageType } from '../types';
 import { getBakeryById, createSubscription } from '../services/api';
 import { IconChevronLeft, IconStar, IconUsers } from './StatIcons';
 import PaymentScreen from './PaymentScreen';
+import StripePaymentWrapper from './StripePaymentWrapper';
 import BakeryFeedScreen from './BakeryFeedScreen';
 import ReceiptScreen from './ReceiptScreen';
 
@@ -132,7 +133,7 @@ const BakeryDetail: React.FC<BakeryDetailProps> = ({ bakeryId, user, onBack, onS
   }
   
   if (flowStep === 'payment' && selectedPackage) {
-      return <PaymentScreen 
+      return <StripePaymentWrapper 
                 user={user}
                 bakery={bakery}
                 basket={basket}
