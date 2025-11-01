@@ -4,9 +4,10 @@ import type { User, Bakery, Subscription } from '../types';
 import { getNearbyBakeries, getClientSubscriptions } from '../services/api';
 import BottomNav from './UserList'; // Repurposed UserList.tsx as BottomNav
 import { CLIENT_NAV_ITEMS } from '../constants';
-import { IconLogout, IconSearch, IconStar, IconReceipt } from './StatIcons';
+import { IconLogout, IconSearch, IconStar, IconReceipt, IconMapPin } from './StatIcons';
 import BakeryDetail from './BakeryDetail'; // Import the new detail component
 import ProfileScreen from './ProfileScreen'; // Import the new profile component
+import LocationScreen from './LocationScreen'; // Import the new location component
 
 interface ClientAppProps {
   user: User;
@@ -120,10 +121,17 @@ const ClientApp: React.FC<ClientAppProps> = ({ user, onLogout }) => {
   const Header = () => (
     <header className="p-4 border-b border-gray-200/80 bg-white sticky top-0 z-10">
         <div className="flex justify-between items-center">
-            <div>
+            <div className="flex-1">
                 <p className="text-sm text-brand-text-secondary">Entregar em</p>
                 <h2 className="font-bold text-md text-brand-text">{user.address} ▼</h2>
             </div>
+            <button 
+                onClick={() => setActivePage('location')}
+                className="mr-3 p-2 rounded-lg bg-brand-primary/10 text-brand-primary hover:bg-brand-primary/20 transition-colors"
+                title="Ver padarias próximas no mapa"
+            >
+                <IconMapPin className="w-5 h-5" />
+            </button>
             <button onClick={onLogout} className="text-brand-text-secondary hover:text-brand-secondary">
                 <IconLogout className="w-6 h-6" />
             </button>
@@ -142,7 +150,16 @@ const ClientApp: React.FC<ClientAppProps> = ({ user, onLogout }) => {
           case 'home':
               return (
                   <div className="p-4">
-                      <h2 className="text-xl font-bold mb-4 text-brand-text">Padarias Próximas</h2>
+                      <div className="flex items-center justify-between mb-4">
+                          <h2 className="text-xl font-bold text-brand-text">Padarias Próximas</h2>
+                          <button 
+                              onClick={() => setActivePage('location')}
+                              className="flex items-center gap-2 px-4 py-2 bg-brand-primary text-white rounded-lg hover:bg-brand-primary/90 transition-colors"
+                          >
+                              <IconMapPin className="w-4 h-4" />
+                              <span className="text-sm font-medium">Ver no Mapa</span>
+                          </button>
+                      </div>
                       {bakeries.map(bakery => <BakeryCard key={bakery.id} bakery={bakery} onClick={() => setSelectedBakeryId(bakery.id)} />)}
                   </div>
               );
@@ -161,6 +178,15 @@ const ClientApp: React.FC<ClientAppProps> = ({ user, onLogout }) => {
                       )}
                   </div>
               );
+          case 'location':
+              return (
+                  <LocationScreen 
+                      user={user}
+                      bakeries={bakeries}
+                      onBakerySelect={(bakery) => setSelectedBakeryId(bakery.id)}
+                      onBack={() => setActivePage('home')}
+                  />
+              );
           default:
               return null;
       }
@@ -168,11 +194,16 @@ const ClientApp: React.FC<ClientAppProps> = ({ user, onLogout }) => {
 
   return (
     <div className="flex flex-col h-full bg-brand-background">
-        {activePage !== 'profile' && <Header />}
+        {activePage !== 'profile' && activePage !== 'location' && <Header />}
         <main className="flex-1 overflow-y-auto pb-20">
-            {activePage === 'profile' ? <ProfileScreen user={user} onLogout={onLogout} /> : renderMainContent()}
+            {activePage === 'profile' ? 
+                <ProfileScreen user={user} onLogout={onLogout} /> : 
+                activePage === 'location' ?
+                    renderMainContent() :
+                    renderMainContent()
+            }
         </main>
-        <BottomNav items={CLIENT_NAV_ITEMS} activePage={activePage} setActivePage={setActivePage} />
+        {activePage !== 'location' && <BottomNav items={CLIENT_NAV_ITEMS} activePage={activePage} setActivePage={setActivePage} />}
     </div>
   );
 };

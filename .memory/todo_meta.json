@@ -19,7 +19,7 @@
         "id": "3",
         "content": "Configurar geolocalização e mapas",
         "details": "1. Integrar Google Maps API para localização de padarias\n2. Implementar cálculo de distância para entregas\n3. Geocodificação de endereços\n4. Rastreamento de entregas em tempo real",
-        "status": "pending",
+        "status": "completed",
         "priority": "medium"
       },
       "4": {
