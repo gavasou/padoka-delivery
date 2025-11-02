@@ -3,45 +3,45 @@
     "Coordinator": {
       "1": {
         "id": "1",
-        "content": "Configurar backend e banco de dados Supabase",
-        "details": "1. Configurar autenticação Supabase para replacing localStorage\n2. Criar tabelas: users, bakeries, products, subscriptions, deliveries, payments\n3. Configurar RLS (Row Level Security) para segurança\n4. Migrar dados mock para estrutura real",
-        "status": "completed",
+        "content": "Criar estrutura do sistema de divisão e pagamentos automáticos",
+        "details": "1. Definir modelos de dados para taxa, divisão e dados bancários. 2. Criar tabelas para padaria_banks, entregador_banks, vendas_divisao, cupons. 3. Implementar lógica de divisão automática (10% padaria, 3% entregador, 3% cliente). 4. Sistema de verificação e validação de CPF.",
+        "status": "pending",
         "priority": "high"
       },
       "2": {
         "id": "2",
-        "content": "Implementar sistema de pagamentos",
-        "details": "1. ✅ Configurar Stripe para pagamentos com cartão\n2. ✅ Implementar PIX como método de pagamento brasileiro\n3. ✅ Implementar boleto bancário\n4. ✅ Implementar carteiras digitais\n5. ✅ Corrigir problema: todas as lojas agora aceitam todos os planos\n6. ✅ Criar webhooks para confirmação de pagamentos\n7. ✅ Sistema de recorrência para assinaturas mensais\n8. ✅ Interface melhorada com badges e diferenciação visual",
-        "status": "completed",
+        "content": "Implementar integração PIX para pagamentos automáticos",
+        "details": "1. Configurar webhook PIX para receber confirmações. 2. Criar função para gerar QR CODE PIX automático. 3. Implementar sistema de monitoramento de pagamentos. 4. Sistema de notificação de pagamentos realizados.",
+        "status": "pending",
         "priority": "high"
       },
       "3": {
         "id": "3",
-        "content": "Configurar geolocalização e mapas",
-        "details": "1. Integrar Google Maps API para localização de padarias\n2. Implementar cálculo de distância para entregas\n3. Geocodificação de endereços\n4. Rastreamento de entregas em tempo real",
-        "status": "completed",
-        "priority": "medium"
+        "content": "Desenvolver interface para dados bancários",
+        "details": "1. Formulário para padaria inserir dados bancários (banco, agencia, conta, PIX). 2. Formulário para entregador inserir dados bancários. 3. Validação e salvamento seguro dos dados. 4. Interface para visualizar e editar dados bancários.",
+        "status": "pending",
+        "priority": "high"
       },
       "4": {
         "id": "4",
-        "content": "Otimizar projeto para produção",
-        "details": "1. Configurar build de produção\n2. Otimizar bundle size\n3. Configurar PWA (Progressive Web App)\n4. Implementar service workers para cache",
-        "status": "completed",
+        "content": "Implementar sistema de cupons por CPF",
+        "details": "1. Validação de CPF no cadastro do cliente. 2. Criar tabela de cupons válidos por CPF. 3. Sistema de aplicação automática de cupons. 4. Painel administrativo para gerenciar cupons. 5. Validação automática no momento da compra.",
+        "status": "pending",
         "priority": "medium"
       },
       "5": {
         "id": "5",
-        "content": "Configurar hospedagem e deploy",
-        "details": "1. Deploy frontend em Vercel/Netlify\n2. Configurar domínio personalizado\n3. Configurar SSL/HTTPS\n4. Deploy das edge functions Supabase\n5. Configurar variáveis de ambiente de produção",
-        "status": "completed",
-        "priority": "high"
+        "content": "Criar dashboard de monitoramento financeiro",
+        "details": "1. Relatórios de vendas e divisão automática. 2. Status de pagamentos PIX realizados. 3. Histórico de transações por período. 4. Alertas de pagamentos pendentes. 5. Métricas de uso de cupons por CPF.",
+        "status": "pending",
+        "priority": "medium"
       },
       "6": {
         "id": "6",
-        "content": "Implementar integrações adicionais",
-        "details": "1. ✅ Sistema de notificações push implementado\n2. ✅ Integração com WhatsApp Business API configurada\n3. ✅ Sistema de avaliações e feedback completo\n4. ✅ Analytics e métricas de uso implementados\n5. ✅ Backup e monitoramento configurados",
-        "status": "completed",
-        "priority": "low"
+        "content": "Testes e validação do sistema completo",
+        "details": "1. Testar fluxo completo de divisão. 2. Validar geração de QR CODE PIX. 3. Testar aplicação de cupons por CPF. 4. Verificar dados bancários seguros. 5. Testar automações de pagamento.",
+        "status": "pending",
+        "priority": "medium"
       }
     }
   }
