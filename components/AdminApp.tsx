@@ -11,11 +11,14 @@ import {
 import { 
     IconLogout, IconCurrencyDollar, IconRepeat, IconBuildingStore, IconUsers, IconEye, 
     IconCheck, IconTrash, IconCash, IconTruck, IconLayoutDashboard, IconMegaphone, IconTarget, IconShield,
-    IconUserCheck, IconUserX, IconSparkles, IconEdit, IconCreditCard
+    IconUserCheck, IconUserX, IconSparkles, IconEdit, IconCreditCard, IconMessageCircle, IconSettings, IconCpu
 } from './StatIcons';
 import Analytics from './Analytics';
 import SystemMonitor from './SystemMonitor';
 import WhatsAppIntegration from './WhatsAppIntegration';
+import AIMaintenancePanel from './AIMaintenancePanel';
+import TeamChat from './TeamChat';
+import AdvancedAdminPanel from './AdvancedAdminPanel';
 
 interface AdminAppProps {
   user: User;
@@ -531,10 +534,13 @@ const AdminApp: React.FC<AdminAppProps> = ({ user, onLogout }) => {
         { id: 'dashboard', label: 'Dashboard', icon: <IconLayoutDashboard /> },
         { id: 'analytics', label: 'Analytics', icon: <IconTarget /> },
         { id: 'system-monitor', label: 'Monitor', icon: <IconShield /> },
+        { id: 'advanced-controls', label: 'Controles', icon: <IconCpu /> },
         { id: 'registrations', label: 'Cadastros', icon: <IconUserCheck /> },
         { id: 'marketing', label: 'Marketing', icon: <IconMegaphone /> },
         { id: 'leads', label: 'Leads', icon: <IconTarget /> },
         { id: 'whatsapp', label: 'WhatsApp', icon: <IconCash /> },
+        { id: 'ai-maintenance', label: 'IA Manutenção', icon: <IconSparkles /> },
+        { id: 'team-chat', label: 'Chat Equipe', icon: <IconMessageCircle /> },
         { id: 'payments', label: 'Pagamentos', icon: <IconCreditCard /> },
         { id: 'moderation', label: 'Moderação', icon: <IconShield /> },
         { id: 'bakeries', label: 'Padarias', icon: <IconBuildingStore /> },
@@ -542,13 +548,21 @@ const AdminApp: React.FC<AdminAppProps> = ({ user, onLogout }) => {
     
     const renderContent = () => {
         if (loading && activeTab === 'dashboard') return <div className="p-8 text-center text-brand-text-secondary">Carregando...</div>;
+        
+        // Chat da equipe deve ocupar toda a tela
+        if (activeTab === 'team-chat') {
+            return <TeamChat currentUser={user} onLogout={onLogout} />;
+        }
+        
         switch (activeTab) {
             case 'dashboard': return <DashboardView stats={stats} />;
             case 'analytics': return <Analytics user={user} />;
             case 'system-monitor': return <SystemMonitor user={user} />;
+            case 'advanced-controls': return <AdvancedAdminPanel user={user} />;
             case 'marketing': return <MarketingView />;
             case 'leads': return <LeadsView />;
             case 'whatsapp': return <WhatsAppIntegration user={user} />;
+            case 'ai-maintenance': return <AIMaintenancePanel user={user} />;
             case 'moderation': return <ModerationView />;
             case 'bakeries': return <BakeriesView />;
             case 'registrations': return <RegistrationManagementView />;
@@ -559,35 +573,39 @@ const AdminApp: React.FC<AdminAppProps> = ({ user, onLogout }) => {
     
 
     return (
-        <div className="flex flex-col h-full bg-brand-background">
-            <header className="p-4 border-b border-gray-200/80 bg-white sticky top-0 z-10">
-                <div className="flex justify-between items-center">
-                    <div>
-                        <p className="text-sm text-brand-text-secondary">Painel do Administrador</p>
-                        <h2 className="font-bold text-lg text-brand-text">{user.name}</h2>
+        <div className={`${activeTab === 'team-chat' ? '' : 'flex flex-col h-full bg-brand-background'}`}>
+            {activeTab !== 'team-chat' && (
+                <header className="p-4 border-b border-gray-200/80 bg-white sticky top-0 z-10">
+                    <div className="flex justify-between items-center">
+                        <div>
+                            <p className="text-sm text-brand-text-secondary">Painel do Administrador</p>
+                            <h2 className="font-bold text-lg text-brand-text">{user.name}</h2>
+                        </div>
+                        <button onClick={onLogout} className="text-brand-text-secondary hover:text-brand-secondary">
+                            <IconLogout className="w-6 h-6" />
+                        </button>
                     </div>
-                    <button onClick={onLogout} className="text-brand-text-secondary hover:text-brand-secondary">
-                        <IconLogout className="w-6 h-6" />
-                    </button>
-                </div>
-            </header>
+                </header>
+            )}
             
-            <nav className="flex justify-start items-center gap-4 p-4 border-b border-gray-200/80 bg-white overflow-x-auto">
-                {navItems.map(item => (
-                    <button 
-                        key={item.id}
-                        onClick={() => setActiveTab(item.id)}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors whitespace-nowrap ${
-                            activeTab === item.id ? 'bg-brand-primary text-brand-secondary' : 'bg-gray-100 text-brand-text-secondary hover:bg-gray-200'
-                        }`}
-                    >
-                       <div className="w-5 h-5">{item.icon}</div>
-                       {item.label}
-                    </button>
-                ))}
-            </nav>
+            {activeTab !== 'team-chat' && (
+                <nav className="flex justify-start items-center gap-4 p-4 border-b border-gray-200/80 bg-white overflow-x-auto">
+                    {navItems.map(item => (
+                        <button 
+                            key={item.id}
+                            onClick={() => setActiveTab(item.id)}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors whitespace-nowrap ${
+                                activeTab === item.id ? 'bg-brand-primary text-brand-secondary' : 'bg-gray-100 text-brand-text-secondary hover:bg-gray-200'
+                            }`}
+                        >
+                           <div className="w-5 h-5">{item.icon}</div>
+                           {item.label}
+                        </button>
+                    ))}
+                </nav>
+            )}
 
-            <main className="flex-1 overflow-y-auto p-4">
+            <main className={`${activeTab === 'team-chat' ? '' : 'flex-1 overflow-y-auto p-4'}`}>
                {renderContent()}
             </main>
         </div>
