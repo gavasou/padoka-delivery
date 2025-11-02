@@ -8,6 +8,7 @@ import PaymentScreen from './PaymentScreen';
 import StripePaymentWrapper from './StripePaymentWrapper';
 import BakeryFeedScreen from './BakeryFeedScreen';
 import ReceiptScreen from './ReceiptScreen';
+import ReviewsManager from './ReviewsManager';
 
 interface BakeryDetailProps {
   bakeryId: string;
@@ -17,7 +18,7 @@ interface BakeryDetailProps {
 }
 
 type Basket = { [productId: string]: { product: Product; quantity: number } };
-type FlowStep = 'products' | 'packages' | 'payment' | 'feed' | 'receipt';
+type FlowStep = 'products' | 'packages' | 'payment' | 'feed' | 'receipt' | 'reviews';
 
 const PACKAGE_DETAILS = {
     [PackageType.DIARIO_AVULSO]: { days: 1, isRecurring: false, description: 'Ideal para experimentar ou para um dia específico.' },
@@ -152,6 +153,10 @@ const BakeryDetail: React.FC<BakeryDetailProps> = ({ bakeryId, user, onBack, onS
       return <BakeryFeedScreen bakery={bakery} onBack={() => setFlowStep('products')} />;
   }
 
+  if (flowStep === 'reviews') {
+      return <ReviewsManager bakeryId={bakery.id} onBack={() => setFlowStep('products')} />;
+  }
+
   return (
     <div className="flex flex-col h-full bg-white">
         <PackageSelectionModal 
@@ -183,12 +188,21 @@ const BakeryDetail: React.FC<BakeryDetailProps> = ({ bakeryId, user, onBack, onS
             </div>
         </div>
         
-        <button 
-            onClick={() => setFlowStep('feed')}
-            className="w-full bg-white text-brand-secondary font-bold py-3 px-4 rounded-xl hover:bg-gray-50 transition-colors shadow-sm border border-gray-200/80 flex items-center justify-center gap-2 mb-4"
-        >
-            <IconUsers className="w-5 h-5"/> Ver o que estão falando ✨
-        </button>
+        <div className="flex gap-3 mb-4">
+            <button 
+                onClick={() => setFlowStep('feed')}
+                className="flex-1 bg-white text-brand-secondary font-bold py-3 px-4 rounded-xl hover:bg-gray-50 transition-colors shadow-sm border border-gray-200/80 flex items-center justify-center gap-2"
+            >
+                <IconUsers className="w-5 h-5"/> Feed
+            </button>
+            
+            <button 
+                onClick={() => setFlowStep('reviews')}
+                className="flex-1 bg-white text-brand-secondary font-bold py-3 px-4 rounded-xl hover:bg-gray-50 transition-colors shadow-sm border border-gray-200/80 flex items-center justify-center gap-2"
+            >
+                <IconStar className="w-5 h-5"/> Avaliações
+            </button>
+        </div>
         
         <h2 className="font-bold text-lg text-brand-text mt-2 mb-3">Produtos para Assinatura</h2>
         <div className="space-y-3">

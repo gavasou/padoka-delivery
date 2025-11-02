@@ -10,6 +10,7 @@ import PWANotifications from './components/PWANotifications';
 import { OfflineStatus, OfflineQueue } from './components/OfflineManager';
 import { LazyAppRenderer } from './components/LazyAppRenderer';
 import { PerformanceMonitor } from './components/PerformanceOptimizer';
+import { NotificationProvider } from './components/NotificationProvider';
 
 // NOTE: Component files have been repurposed to build the new application
 // as per the user's request, while adhering to the existing file structure.
@@ -76,21 +77,23 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="w-full min-h-screen font-sans bg-brand-background text-brand-text">
-      {/* PWA Notifications and Status */}
-      <PWANotifications />
-      
-      <div className="max-w-md mx-auto h-screen flex flex-col shadow-lg bg-white">
-        {/* Offline Status Components */}
-        <OfflineStatus />
-        <OfflineQueue />
+    <NotificationProvider user={currentUser}>
+      <div className="w-full min-h-screen font-sans bg-brand-background text-brand-text">
+        {/* PWA Notifications and Status */}
+        <PWANotifications />
         
-        <LazyAppRenderer user={currentUser} onLogout={handleLogout} />
+        <div className="max-w-md mx-auto h-screen flex flex-col shadow-lg bg-white">
+          {/* Offline Status Components */}
+          <OfflineStatus />
+          <OfflineQueue />
+          
+          <LazyAppRenderer user={currentUser} onLogout={handleLogout} />
+        </div>
+        
+        {/* Performance Monitor (apenas em desenvolvimento) */}
+        <PerformanceMonitor />
       </div>
-      
-      {/* Performance Monitor (apenas em desenvolvimento) */}
-      <PerformanceMonitor />
-    </div>
+    </NotificationProvider>
   );
 };
 

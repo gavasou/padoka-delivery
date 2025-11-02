@@ -13,6 +13,9 @@ import {
     IconCheck, IconTrash, IconCash, IconTruck, IconLayoutDashboard, IconMegaphone, IconTarget, IconShield,
     IconUserCheck, IconUserX, IconSparkles, IconEdit, IconCreditCard
 } from './StatIcons';
+import Analytics from './Analytics';
+import SystemMonitor from './SystemMonitor';
+import WhatsAppIntegration from './WhatsAppIntegration';
 
 interface AdminAppProps {
   user: User;
@@ -526,9 +529,12 @@ const AdminApp: React.FC<AdminAppProps> = ({ user, onLogout }) => {
     
     const navItems = [
         { id: 'dashboard', label: 'Dashboard', icon: <IconLayoutDashboard /> },
+        { id: 'analytics', label: 'Analytics', icon: <IconTarget /> },
+        { id: 'system-monitor', label: 'Monitor', icon: <IconShield /> },
         { id: 'registrations', label: 'Cadastros', icon: <IconUserCheck /> },
         { id: 'marketing', label: 'Marketing', icon: <IconMegaphone /> },
         { id: 'leads', label: 'Leads', icon: <IconTarget /> },
+        { id: 'whatsapp', label: 'WhatsApp', icon: <IconCash /> },
         { id: 'payments', label: 'Pagamentos', icon: <IconCreditCard /> },
         { id: 'moderation', label: 'Moderação', icon: <IconShield /> },
         { id: 'bakeries', label: 'Padarias', icon: <IconBuildingStore /> },
@@ -538,8 +544,11 @@ const AdminApp: React.FC<AdminAppProps> = ({ user, onLogout }) => {
         if (loading && activeTab === 'dashboard') return <div className="p-8 text-center text-brand-text-secondary">Carregando...</div>;
         switch (activeTab) {
             case 'dashboard': return <DashboardView stats={stats} />;
+            case 'analytics': return <Analytics user={user} />;
+            case 'system-monitor': return <SystemMonitor user={user} />;
             case 'marketing': return <MarketingView />;
             case 'leads': return <LeadsView />;
+            case 'whatsapp': return <WhatsAppIntegration user={user} />;
             case 'moderation': return <ModerationView />;
             case 'bakeries': return <BakeriesView />;
             case 'registrations': return <RegistrationManagementView />;
