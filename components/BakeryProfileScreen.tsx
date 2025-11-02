@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import type { User, Bakery } from '../types';
 import { getBakeryById, updateBakeryProfile } from '../services/api';
 import { IconEdit, IconShieldCheck, IconLogout, IconChevronRight } from './StatIcons';
+import ImageUpload from './ImageUpload';
 
 interface BakeryProfileScreenProps {
   user: User;
@@ -71,7 +72,19 @@ const BakeryProfileScreen: React.FC<BakeryProfileScreenProps> = ({ user, onLogou
                         <input type="text" placeholder="Seu Nome" value={owner.name} onChange={e => setOwner({...owner, name: e.target.value })} />
                         <input type="email" placeholder="Seu Email" value={owner.email} onChange={e => setOwner({...owner, email: e.target.value })} />
                         <input type="tel" placeholder="Seu Telefone" value={owner.phone} onChange={e => setOwner({...owner, phone: e.target.value })} />
-                        <input type="text" placeholder="URL da Foto de Perfil" value={owner.profileImageUrl} onChange={e => setOwner({...owner, profileImageUrl: e.target.value })} />
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Foto do Proprietário
+                            </label>
+                            <ImageUpload
+                                onImageUploaded={(path, publicUrl) => setOwner({...owner, profileImageUrl: publicUrl})}
+                                bucketName="avatars"
+                                existingImage={owner.profileImageUrl}
+                                uploadPath={`user-${owner.id}`}
+                                maxSizeInMB={2}
+                                disabled={false}
+                            />
+                        </div>
                     </div>
                 ) : (
                     <div className="flex items-center gap-4">
@@ -97,7 +110,19 @@ const BakeryProfileScreen: React.FC<BakeryProfileScreenProps> = ({ user, onLogou
                     <div className="space-y-3">
                         <input type="text" placeholder="Nome da Padaria" value={bakery.name} onChange={e => setBakery({...bakery, name: e.target.value })} />
                         <input type="text" placeholder="Endereço" value={bakery.address} onChange={e => setBakery({...bakery, address: e.target.value })} />
-                        <input type="text" placeholder="URL do Logo" value={bakery.logoUrl} onChange={e => setBakery({...bakery, logoUrl: e.target.value })} />
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Logo da Padaria
+                            </label>
+                            <ImageUpload
+                                onImageUploaded={(path, publicUrl) => setBakery({...bakery, logoUrl: publicUrl})}
+                                bucketName="bakery-images"
+                                existingImage={bakery.logoUrl}
+                                uploadPath={`bakery-${bakery.id}`}
+                                maxSizeInMB={10}
+                                disabled={false}
+                            />
+                        </div>
                     </div>
                 ) : (
                     <div className="flex items-center gap-4">

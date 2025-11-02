@@ -4,6 +4,7 @@ import type { User, Product } from '../types';
 // Fix: Removed getAIMarketingSuggestions as it's not suitable for this component's needs.
 import { getBakeryProducts, addProduct, updateProduct, removeProduct } from '../services/api';
 import { IconPlus, IconEdit, IconTrash, IconSparkles, IconFlame } from './StatIcons';
+import ImageUpload from './ImageUpload';
 
 interface ProductManagerProps {
   user: User;
@@ -19,7 +20,8 @@ const ProductFormModal: React.FC<{
     product: Partial<Product> | null;
     onSave: (product: Omit<Product, 'id'> | Product) => void;
     onClose: () => void;
-}> = ({ product, onSave, onClose }) => {
+    user: User;
+}> = ({ product, onSave, onClose, user }) => {
     const [formData, setFormData] = useState({
         name: product?.name || '',
         price: product?.price || 0,
@@ -30,6 +32,10 @@ const ProductFormModal: React.FC<{
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: name === 'price' ? parseFloat(value) : value }));
+    };
+
+    const handleImageUploaded = (path: string, publicUrl: string) => {
+        setFormData(prev => ({ ...prev, imageUrl: publicUrl }));
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -43,12 +49,29 @@ const ProductFormModal: React.FC<{
 
     return (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 animate-fade-in">
-            <div className="bg-white rounded-2xl p-6 w-full max-w-sm">
+            <div className="bg-white rounded-2xl p-6 w-full max-w-lg">
                 <h2 className="text-xl font-bold text-brand-text mb-4">{product?.id ? 'Editar Produto' : 'Adicionar Produto'}</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <input type="text" name="name" placeholder="Nome do Produto" value={formData.name} onChange={handleChange} required />
                     <input type="number" name="price" placeholder="Preço (R$)" value={formData.price} onChange={handleChange} required step="0.01" />
-                    <input type="text" name="imageUrl" placeholder="URL da Imagem" value={formData.imageUrl} onChange={handleChange} required />
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Foto do Produto
+                        </label>
+                        <ImageUpload
+                            onImageUploaded={handleImageUploaded}
+                            bucketName="product-images"
+                            existingImage={formData.imageUrl}
+                            uploadPath={`bakery-${user.id}`}
+                            maxSizeInMB={5}
+                            disabled={false}
+                        />
+                        {!formData.imageUrl && (
+                            <p className="text-xs text-gray-500 mt-1">
+                                Adicione uma foto para tornar seu produto mais atrativo
+                            </p>
+                        )}
+                    </div>
                     <select name="popularity" value={formData.popularity} onChange={handleChange}>
                         <option value="low">Popularidade Baixa</option>
                         <option value="medium">Popularidade Média</option>
@@ -218,7 +241,7 @@ const ProductManager: React.FC<ProductManagerProps> = ({ user }) => {
 
     return (
         <div className="p-4">
-            {showForm && <ProductFormModal product={editingProduct} onClose={() => { setShowForm(false); setEditingProduct(null); }} onSave={handleSaveProduct} />}
+            {showForm && <ProductFormModal product={editingProduct} user={user} onClose={() => { setShowForm(false); setEditingProduct(null); }} onSave={handleSaveProduct} />}
             {showSuggestions && <SuggestionsModal suggestions={suggestions} onAdd={handleAddSuggestion} onClose={() => setShowSuggestions(false)} />}
             
             <div className="flex justify-between items-center mb-4">
