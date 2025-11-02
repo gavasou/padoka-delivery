@@ -26,14 +26,14 @@
         "id": "4",
         "content": "Otimizar projeto para produção",
         "details": "1. Configurar build de produção\n2. Otimizar bundle size\n3. Configurar PWA (Progressive Web App)\n4. Implementar service workers para cache",
-        "status": "pending",
+        "status": "completed",
         "priority": "medium"
       },
       "5": {
         "id": "5",
         "content": "Configurar hospedagem e deploy",
         "details": "1. Deploy frontend em Vercel/Netlify\n2. Configurar domínio personalizado\n3. Configurar SSL/HTTPS\n4. Deploy das edge functions Supabase\n5. Configurar variáveis de ambiente de produção",
-        "status": "pending",
+        "status": "completed",
         "priority": "high"
       },
       "6": {

@@ -1,11 +1,105 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Padoka - Assinaturas de Padarias</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    <meta name="theme-color" content="#F9B400" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Padoka" />
+    <meta name="msapplication-TileColor" content="#F9B400" />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Assinaturas de padarias artesanais com delivery diário. Pães frescos direto da padaria para sua mesa." />
+    <meta name="keywords" content="padaria, delivery, assinatura, pães artesanais, padoka" />
+    <meta name="author" content="Padoka" />
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Assinaturas de padarias artesanais com delivery diário. Pães frescos, croissants e doces direto da padaria para sua mesa. Cadastre-se e receba seus pães favoritos todos os dias." />
+    <meta name="keywords" content="delivery de pães, padaria artesanal, assinatura pães, pães frescos, delivery diário, padaria online, croissants, doces artesanais, pão francês, entrega diária" />
+    <meta name="author" content="Padoka" />
+    <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow" />
+    <link rel="canonical" href="https://padoka.vercel.app" />
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Padoka - Delivery de Pães Artesanais" />
+    <meta property="og:description" content="Assinaturas de padarias artesanais com delivery diário. Pães frescos, croissants e doces direto da padaria para sua mesa. Cadastre-se e receba seus pães favoritos todos os dias." />
+    <meta property="og:image" content="https://padoka.vercel.app/pwa-512x512.png" />
+    <meta property="og:url" content="https://padoka.vercel.app" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:site_name" content="Padoka" />
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@padoka" />
+    <meta name="twitter:title" content="Padoka - Delivery de Pães Artesanais" />
+    <meta name="twitter:description" content="Assinaturas de padarias artesanais com delivery diário. Pães frescos, croissants e doces direto da padaria para sua mesa. Cadastre-se e receba seus pães favoritos todos os dias." />
+    <meta name="twitter:image" content="https://padoka.vercel.app/pwa-512x512.png" />
+    
+    <!-- Additional Meta Tags -->
+    <meta name="application-name" content="Padoka" />
+    <meta name="msapplication-TileColor" content="#F9B400" />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Padoka - Delivery de Pães" />
+    <meta property="og:description" content="Assinaturas de padarias artesanais com delivery diário" />
+    <meta property="og:image" content="/pwa-512x512.png" />
+    <meta property="og:url" content="https://padoka.app" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Padoka - Delivery de Pães" />
+    <meta name="twitter:description" content="Assinaturas de padarias artesanais com delivery diário" />
+    <meta name="twitter:image" content="/pwa-512x512.png" />
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="64x64" href="/pwa-64x64.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/pwa-192x192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/pwa-512x512.png" />
+    <link rel="apple-touch-icon" href="/pwa-192x192.png" />
+    <link rel="mask-icon" href="/pwa-192x192.png" color="#F9B400" />
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "Padoka",
+      "description": "Assinaturas de padarias artesanais com delivery diário. Pães frescos, croissants e doces direto da padaria para sua mesa. Cadastre-se e receba seus pães favoritos todos os dias.",
+      "url": "https://padoka.vercel.app",
+      "logo": "https://padoka.vercel.app/pwa-512x512.png",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+55-11-99999-9999",
+        "contactType": "customer service"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "São Paulo",
+        "addressRegion": "SP",
+        "addressCountry": "BR"
+      },
+      "openingHours": "Mo-Su 06:00-22:00",
+      "servesCuisine": "Padaria Artesanal",
+      "paymentAccepted": "Credit Card, Debit Card, PIX",
+      "priceRange": "$$"
+    }
+    </script>
+    
+    <title>Padoka - Delivery de Pães</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

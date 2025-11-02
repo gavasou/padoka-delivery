@@ -5,13 +5,15 @@ import { UserRole } from './types';
 import { supabase } from './services/supabase';
 import { getCurrentUser, logout as supabaseLogout } from './services/supabaseApi';
 
+// PWA Components
+import PWANotifications from './components/PWANotifications';
+import { OfflineStatus, OfflineQueue } from './components/OfflineManager';
+import { LazyAppRenderer } from './components/LazyAppRenderer';
+import { PerformanceMonitor } from './components/PerformanceOptimizer';
+
 // NOTE: Component files have been repurposed to build the new application
 // as per the user's request, while adhering to the existing file structure.
 import LoginScreen from './components/Sidebar'; // Originally Sidebar.tsx
-import ClientApp from './components/Dashboard'; // Originally Dashboard.tsx
-import BakeryApp from './components/BakeryList'; // Originally BakeryList.tsx
-import DeliveryApp from './components/SubscriptionList'; // Originally SubscriptionList.tsx
-import AdminApp from './components/AdminApp'; // New Admin Dashboard
 import SplashScreen from './components/SplashScreen';
 
 const App: React.FC = () => {
@@ -73,31 +75,21 @@ const App: React.FC = () => {
     return <LoginScreen onLogin={handleLogin} />;
   }
 
-  const renderAppForRole = () => {
-    switch (currentUser.role) {
-      case UserRole.CLIENT:
-        return <ClientApp user={currentUser} onLogout={handleLogout} />;
-      case UserRole.BAKERY:
-        return <BakeryApp user={currentUser} onLogout={handleLogout} />;
-      case UserRole.DELIVERY:
-        return <DeliveryApp user={currentUser} onLogout={handleLogout} />;
-      case UserRole.ADMIN:
-        return <AdminApp user={currentUser} onLogout={handleLogout} />;
-      default:
-        return (
-          <div className="p-4">
-            <p>Unknown user role.</p>
-            <button onClick={handleLogout} className="text-red-500">Logout</button>
-          </div>
-        );
-    }
-  };
-
   return (
     <div className="w-full min-h-screen font-sans bg-brand-background text-brand-text">
+      {/* PWA Notifications and Status */}
+      <PWANotifications />
+      
       <div className="max-w-md mx-auto h-screen flex flex-col shadow-lg bg-white">
-        {renderAppForRole()}
+        {/* Offline Status Components */}
+        <OfflineStatus />
+        <OfflineQueue />
+        
+        <LazyAppRenderer user={currentUser} onLogout={handleLogout} />
       </div>
+      
+      {/* Performance Monitor (apenas em desenvolvimento) */}
+      <PerformanceMonitor />
     </div>
   );
 };
