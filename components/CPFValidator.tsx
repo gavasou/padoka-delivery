@@ -234,9 +234,9 @@ export default function CPFValidator({ customerId, onCPFVerified }: Props) {
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
             <h3 className="font-semibold text-amber-800 mb-2">Como funcionam os creditos:</h3>
             <ul className="list-disc list-inside text-sm text-amber-700 space-y-1">
-              <li>Voce recebe 3% de credito em cada compra</li>
-              <li>Os creditos sao adicionados automaticamente ao seu saldo</li>
-              <li>Use seus creditos em compras futuras</li>
+              <li>Sistema de carteira de creditos para gamificacao</li>
+              <li>Ganhe pontos e recedas bonus atraves de acoes</li>
+              <li>Use seus creditos em promocoes e ofertas especiais</li>
               <li>Os creditos nao expiram</li>
             </ul>
           </div>
@@ -246,8 +246,8 @@ export default function CPFValidator({ customerId, onCPFVerified }: Props) {
           {!cpfData && (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
               <p className="text-sm text-blue-800">
-                Para participar do programa de creditos, precisamos verificar seu CPF. 
-                Voce ganhara 3% de credito em cada compra!
+                Para participar do programa de carteira de creditos e gamificacao, 
+                necessitamos verificar seu CPF para unlocker bonus e acoes especiais!
               </p>
             </div>
           )}
