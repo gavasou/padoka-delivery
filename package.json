@@ -2,7 +2,14 @@
   "name": "padoka-delivery-pwa",
   "version": "1.0.0",
   "description": "Padoka - Delivery de Pães Artesanais PWA",
-  "keywords": ["pwa", "delivery", "bakery", "subscription", "react", "vite"],
+  "keywords": [
+    "pwa",
+    "delivery",
+    "bakery",
+    "subscription",
+    "react",
+    "vite"
+  ],
   "author": "Padoka Team",
   "license": "MIT",
   "private": true,

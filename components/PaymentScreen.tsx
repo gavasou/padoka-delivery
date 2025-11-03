@@ -6,6 +6,7 @@ import type { Bakery, Product, PackageType, ReceiptData, User } from '../types';
 import { IconChevronLeft, IconCreditCard, IconPix, IconBarcode, IconWallet, IconCheckCircle } from './StatIcons';
 import { calculateDeliveryFee, calculateServiceFee } from '../services/feeService';
 import { getStripe, createStripeSubscription, createStripePayment } from '../services/stripeService';
+import { supabase } from '../lib/supabase';
 
 type Basket = { [productId: string]: { product: Product; quantity: number } };
 
@@ -72,6 +73,31 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ user, bakery, basket, sel
         } else {
             setDiscount(0);
             setCouponError('Cupom inválido.');
+        }
+    };
+    
+    // Processa divisao automatica de vendas (10% padaria + 3% entregador + 3% cliente + resto plataforma)
+    const processSalesDivision = async (paymentId: string, totalAmount: number, bakeryId: string, deliveryId?: string, customerId?: string) => {
+        try {
+            const { data, error } = await supabase.functions.invoke('daily-sales-processor', {
+                body: {
+                    paymentId,
+                    totalAmount,
+                    bakeryId,
+                    deliveryId: deliveryId || null,
+                    customerId: customerId || null
+                }
+            });
+
+            if (error) {
+                console.error('Erro ao processar divisao de vendas:', error);
+                // Nao bloqueia o pagamento, apenas loga o erro
+            } else {
+                console.log('Divisao de vendas processada:', data);
+            }
+        } catch (error) {
+            console.error('Erro ao processar divisao de vendas:', error);
+            // Nao bloqueia o pagamento, apenas loga o erro
         }
     };
     
@@ -142,6 +168,18 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ user, bakery, basket, sel
 
                 if (result.checkoutUrl) {
                     toast.success('Redirecionando para o checkout...');
+                    
+                    // Processar divisao automatica antes de redirecionar
+                    if (result.subscriptionId) {
+                        await processSalesDivision(
+                            result.subscriptionId,
+                            finalTotal,
+                            bakery.id,
+                            undefined,
+                            user.id
+                        );
+                    }
+                    
                     window.location.href = result.checkoutUrl;
                 } else {
                     throw new Error('URL de checkout não retornada');
@@ -162,6 +200,18 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ user, bakery, basket, sel
 
                 if (result.checkoutUrl) {
                     toast.success(`Redirecionando para pagamento via ${selectedPaymentMethod?.label}...`);
+                    
+                    // Processar divisao automatica antes de redirecionar
+                    if (result.paymentId) {
+                        await processSalesDivision(
+                            result.paymentId,
+                            finalTotal,
+                            bakery.id,
+                            undefined,
+                            user.id
+                        );
+                    }
+                    
                     window.location.href = result.checkoutUrl;
                 } else {
                     throw new Error('URL de checkout não retornada');
@@ -173,7 +223,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ user, bakery, basket, sel
             toast.error(error.message || 'Falha no pagamento. Tente novamente.');
             setPaymentStep('method_selection');
         }
-    }, [selectedMethod, selectedPackage, user, bakery.id, basket, finalTotal]);
+    }, [selectedMethod, selectedPackage, user, bakery.id, basket, finalTotal, processSalesDivision]);
 
     // FIX: Moved useEffect to the top level of the component to follow the Rules of Hooks.
     useEffect(() => {

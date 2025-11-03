@@ -3,11 +3,12 @@ import React, { useState, useEffect } from 'react';
 import type { User, FaqItem, Achievement, GalleryImage, ChatMessage } from '../types';
 import { 
     IconEdit, IconAward, IconCamera, IconHelpCircle, IconMessageCircle, IconChevronRight, 
-    IconChevronLeft, IconSend, IconLogout
+    IconChevronLeft, IconSend, IconLogout, IconCash
 } from './StatIcons';
 import { 
     getClientFaqs, getClientAchievements, getGalleryImages, getClientChatMessages 
 } from '../services/api';
+import CPFValidator from './CPFValidator';
 
 interface ProfileScreenProps {
   user: User;
@@ -82,6 +83,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onLogout }) => {
         </div>
         <div className="p-4 space-y-3">
             {renderMenuItem(<IconEdit className="w-6 h-6" />, 'Editar Perfil', () => setView('edit'))}
+            {renderMenuItem(<IconCash className="w-6 h-6" />, 'Meus Creditos PIX (3%)', () => setView('cpf'))}
             {renderMenuItem(<IconAward className="w-6 h-6" />, 'Minhas Conquistas', () => setView('achievements'))}
             {renderMenuItem(<IconCamera className="w-6 h-6" />, 'Galeria de Fotos', () => setView('gallery'))}
             {renderMenuItem(<IconHelpCircle className="w-6 h-6" />, 'Central de Ajuda', () => setView('faq'))}
@@ -122,6 +124,9 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onLogout }) => {
                 <div><label className="text-sm font-medium">Endereço</label><input type="text" defaultValue={user.address} /></div>
                 <button className="primary w-full !mt-6">Salvar Alterações</button>
             </div>
+        </SubViewContainer>;
+        case 'cpf': return <SubViewContainer title="Meus Creditos PIX">
+            <CPFValidator customerId={user.id} />
         </SubViewContainer>;
         case 'achievements': return <SubViewContainer title="Minhas Conquistas">
             <div className="space-y-3">

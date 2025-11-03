@@ -19,6 +19,9 @@ import WhatsAppIntegration from './WhatsAppIntegration';
 import AIMaintenancePanel from './AIMaintenancePanel';
 import TeamChat from './TeamChat';
 import AdvancedAdminPanel from './AdvancedAdminPanel';
+import BankingManager from './BankingManager';
+import PIXPaymentSystem from './PIXPaymentSystem';
+import FinancialDashboard from './FinancialDashboard';
 
 interface AdminAppProps {
   user: User;
@@ -433,6 +436,76 @@ const GatewayConfigModal: React.FC<{
     );
 };
 
+const PIXSystemView: React.FC<{ user: User }> = ({ user }) => {
+    const [activeSubTab, setActiveSubTab] = useState<'dashboard' | 'banking' | 'transfers'>('dashboard');
+
+    return (
+        <section className="space-y-6">
+            <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200/50">
+                <h3 className="font-bold text-xl mb-4 text-brand-text">Sistema PIX e Repasses Automaticos</h3>
+                <div className="flex gap-2 mb-4">
+                    <button
+                        onClick={() => setActiveSubTab('dashboard')}
+                        className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                            activeSubTab === 'dashboard'
+                                ? 'bg-brand-primary text-brand-secondary'
+                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        }`}
+                    >
+                        Dashboard Financeiro
+                    </button>
+                    <button
+                        onClick={() => setActiveSubTab('banking')}
+                        className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                            activeSubTab === 'banking'
+                                ? 'bg-brand-primary text-brand-secondary'
+                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        }`}
+                    >
+                        Dados Bancarios
+                    </button>
+                    <button
+                        onClick={() => setActiveSubTab('transfers')}
+                        className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                            activeSubTab === 'transfers'
+                                ? 'bg-brand-primary text-brand-secondary'
+                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        }`}
+                    >
+                        Transferencias PIX
+                    </button>
+                </div>
+            </div>
+
+            {activeSubTab === 'dashboard' && (
+                <FinancialDashboard userId={user.id} userRole={user.role} />
+            )}
+
+            {activeSubTab === 'banking' && (
+                <div className="space-y-6">
+                    {(user.role === 'BAKERY' || user.role === 'ADMIN') && (
+                        <BankingManager userType="BAKERY" userId={user.id} />
+                    )}
+                    {(user.role === 'DELIVERY' || user.role === 'ADMIN') && (
+                        <BankingManager userType="DELIVERY" userId={user.id} />
+                    )}
+                    {user.role === 'ADMIN' && (
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+                            <p className="text-sm text-blue-800">
+                                Como administrador, voce pode visualizar e gerenciar os dados bancarios de todas as padarias e entregadores.
+                            </p>
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {activeSubTab === 'transfers' && (
+                <PIXPaymentSystem userId={user.id} userRole={user.role} />
+            )}
+        </section>
+    );
+};
+
 const PaymentsView: React.FC = () => {
     const [gateways, setGateways] = useState<PaymentGateway[]>([]);
     const [stats, setStats] = useState<PaymentStats | null>(null);
@@ -541,6 +614,7 @@ const AdminApp: React.FC<AdminAppProps> = ({ user, onLogout }) => {
         { id: 'whatsapp', label: 'WhatsApp', icon: <IconCash /> },
         { id: 'ai-maintenance', label: 'IA Manutenção', icon: <IconSparkles /> },
         { id: 'team-chat', label: 'Chat Equipe', icon: <IconMessageCircle /> },
+        { id: 'pix-system', label: 'PIX e Repasses', icon: <IconCash /> },
         { id: 'payments', label: 'Pagamentos', icon: <IconCreditCard /> },
         { id: 'moderation', label: 'Moderação', icon: <IconShield /> },
         { id: 'bakeries', label: 'Padarias', icon: <IconBuildingStore /> },
@@ -563,6 +637,7 @@ const AdminApp: React.FC<AdminAppProps> = ({ user, onLogout }) => {
             case 'leads': return <LeadsView />;
             case 'whatsapp': return <WhatsAppIntegration user={user} />;
             case 'ai-maintenance': return <AIMaintenancePanel user={user} />;
+            case 'pix-system': return <PIXSystemView user={user} />;
             case 'moderation': return <ModerationView />;
             case 'bakeries': return <BakeriesView />;
             case 'registrations': return <RegistrationManagementView />;
