@@ -3,9 +3,9 @@
     "Coordinator": {
       "1": {
         "id": "1",
-        "content": "Criar estrutura do sistema de divisão e pagamentos automáticos",
-        "details": "✅ COMPLETO: 5 tabelas criadas (bakery_banking_data, delivery_banking_data, customer_cpf_data, daily_sales_division, payment_transfers), Edge functions deployadas, lógica de divisão implementada",
-        "status": "completed",
+        "content": "CORREÇÃO: Ajustar lógica de divisão - 84% venda para padaria, 97% entrega para entregador, 16% taxa total para plataforma",
+        "details": "Corrigir implementação: plataforma fica apenas com taxa (10%+3%+3%=16%), 84% venda vai para padaria, 97% entrega vai para entregador, cliente recebe 3% crédito",
+        "status": "in_progress",
         "priority": "high"
       },
       "2": {

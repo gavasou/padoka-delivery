@@ -16,6 +16,8 @@ Deno.serve(async (req) => {
       paymentId,
       subscriptionId,
       totalAmount,
+      itemsTotal,
+      deliveryTotal,
       bakeryId,
       deliveryId,
       customerId
@@ -32,12 +34,22 @@ Deno.serve(async (req) => {
       throw new Error('Configuracao do Supabase ausente');
     }
 
-    // Calcular divisão: 10% padaria + 3% entregador + 3% cliente + resto plataforma
+    // LÓGICA CORRETA: Plataforma recebe APENAS as taxas (16% total)
+    // Se não houver separação, assume 80% itens e 20% entrega
     const amount = parseFloat(totalAmount);
-    const bakeryAmount = amount * 0.10; // 10%
-    const deliveryAmount = deliveryId ? amount * 0.03 : 0; // 3% se houver entregador
-    const customerCreditAmount = customerId ? amount * 0.03 : 0; // 3% se houver cliente
-    const platformAmount = amount - bakeryAmount - deliveryAmount - customerCreditAmount;
+    const itemsAmount = itemsTotal ? parseFloat(itemsTotal) : amount * 0.80;
+    const deliveryAmount = deliveryTotal ? parseFloat(deliveryTotal) : amount * 0.20;
+
+    // Taxas da plataforma (16% total)
+    const platformFeeFromItems = itemsAmount * 0.10;     // 10% dos itens
+    const platformFeeFromDelivery = deliveryAmount * 0.03; // 3% da entrega
+    const platformFeeFromCustomer = amount * 0.03;       // 3% para crédito do cliente
+    const platformAmount = platformFeeFromItems + platformFeeFromDelivery + platformFeeFromCustomer;
+
+    // Valores para beneficiários (84% total)
+    const bakeryAmount = itemsAmount - platformFeeFromItems;  // 90% dos itens
+    const deliveryPersonAmount = deliveryId ? (deliveryAmount - platformFeeFromDelivery) : 0; // 97% da entrega
+    const customerCreditAmount = customerId ? platformFeeFromCustomer : 0; // 3% de crédito
 
     // Inserir registro de divisão diária
     const divisionData = {
@@ -47,7 +59,7 @@ Deno.serve(async (req) => {
       customer_id: customerId || null,
       total_sale_amount: amount,
       bakery_amount: bakeryAmount,
-      delivery_amount: deliveryAmount,
+      delivery_amount: deliveryPersonAmount,
       customer_credit_amount: customerCreditAmount,
       platform_amount: platformAmount,
       payment_id: paymentId || null,
@@ -89,10 +101,10 @@ Deno.serve(async (req) => {
         division,
         breakdown: {
           total: amount.toFixed(2),
-          bakery: bakeryAmount.toFixed(2),
-          delivery: deliveryAmount.toFixed(2),
-          customerCredit: customerCreditAmount.toFixed(2),
-          platform: platformAmount.toFixed(2)
+          platform: platformAmount.toFixed(2) + ' (16% taxas)',
+          bakery: bakeryAmount.toFixed(2) + ' (90% itens)',
+          delivery: deliveryPersonAmount.toFixed(2) + ' (97% entrega)',
+          customerCredit: customerCreditAmount.toFixed(2) + ' (3% credito)'
         }
       }
     }), {

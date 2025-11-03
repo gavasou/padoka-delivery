@@ -76,13 +76,19 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ user, bakery, basket, sel
         }
     };
     
-    // Processa divisao automatica de vendas (10% padaria + 3% entregador + 3% cliente + resto plataforma)
+    // Processa divisao automatica de vendas
+    // LOGICA CORRETA: Plataforma recebe APENAS taxas (16% total)
+    // - Padaria: 90% dos itens (plataforma fica com 10%)
+    // - Entregador: 97% da entrega (plataforma fica com 3%)
+    // - Cliente: 3% de credito
     const processSalesDivision = async (paymentId: string, totalAmount: number, bakeryId: string, deliveryId?: string, customerId?: string) => {
         try {
             const { data, error } = await supabase.functions.invoke('daily-sales-processor', {
                 body: {
                     paymentId,
                     totalAmount,
+                    itemsTotal: totalItemCost,      // Valor dos itens separado
+                    deliveryTotal: totalDeliveryFee, // Valor da entrega separado
                     bakeryId,
                     deliveryId: deliveryId || null,
                     customerId: customerId || null

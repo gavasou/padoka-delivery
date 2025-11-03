@@ -175,13 +175,13 @@ export default function FinancialDashboard({ userId, userRole }: Props) {
           </div>
 
           <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-lg p-6 text-white">
-            <p className="text-sm opacity-90 mb-1">Padarias (10%)</p>
+            <p className="text-sm opacity-90 mb-1">Padarias (90%)</p>
             <p className="text-3xl font-bold">R$ {summary.totalBakeryShare.toFixed(2)}</p>
             <p className="text-sm opacity-75 mt-2">Repasses para padarias</p>
           </div>
 
           <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg p-6 text-white">
-            <p className="text-sm opacity-90 mb-1">Entregadores (3%)</p>
+            <p className="text-sm opacity-90 mb-1">Entregadores (97%)</p>
             <p className="text-3xl font-bold">R$ {summary.totalDeliveryShare.toFixed(2)}</p>
             <p className="text-sm opacity-75 mt-2">Repasses para entregadores</p>
           </div>
@@ -193,9 +193,9 @@ export default function FinancialDashboard({ userId, userRole }: Props) {
           </div>
 
           <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-lg p-6 text-white">
-            <p className="text-sm opacity-90 mb-1">Plataforma (84%)</p>
+            <p className="text-sm opacity-90 mb-1">Plataforma (16%)</p>
             <p className="text-3xl font-bold">R$ {summary.totalPlatformShare.toFixed(2)}</p>
-            <p className="text-sm opacity-75 mt-2">Receita da plataforma</p>
+            <p className="text-sm opacity-75 mt-2">Taxas da plataforma</p>
           </div>
 
           <div className="bg-gradient-to-br from-gray-600 to-gray-700 rounded-lg p-6 text-white">
