@@ -185,7 +185,7 @@ export default function CPFValidator({ customerId, onCPFVerified }: Props) {
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Sistema de CPF e Creditos</h2>
+        <h2 className="text-2xl font-bold text-gray-800">Sistema de CPF e créditos</h2>
         {isViewing && (
           <button
             onClick={() => setEditing(true)}

@@ -83,7 +83,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onLogout }) => {
         </div>
         <div className="p-4 space-y-3">
             {renderMenuItem(<IconEdit className="w-6 h-6" />, 'Editar Perfil', () => setView('edit'))}
-            {renderMenuItem(<IconCash className="w-6 h-6" />, 'Meus Creditos PIX', () => setView('cpf'))}
+            {renderMenuItem(<IconCash className="w-6 h-6" />, 'Meus créditos', () => setView('cpf'))}
             {renderMenuItem(<IconAward className="w-6 h-6" />, 'Minhas Conquistas', () => setView('achievements'))}
             {renderMenuItem(<IconCamera className="w-6 h-6" />, 'Galeria de Fotos', () => setView('gallery'))}
             {renderMenuItem(<IconHelpCircle className="w-6 h-6" />, 'Central de Ajuda', () => setView('faq'))}
@@ -125,7 +125,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onLogout }) => {
                 <button className="primary w-full !mt-6">Salvar Alterações</button>
             </div>
         </SubViewContainer>;
-        case 'cpf': return <SubViewContainer title="Meus Creditos PIX">
+        case 'cpf': return <SubViewContainer title="Meus créditos">
             <CPFValidator customerId={user.id} />
         </SubViewContainer>;
         case 'achievements': return <SubViewContainer title="Minhas Conquistas">
