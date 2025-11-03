@@ -192,7 +192,8 @@ Implementar sistema automatizado de divisão de vendas e repasses PIX:
 
 ### Deploy URLs
 - **Backend (Edge Function)**: https://ywpazjaaqavjcdonlnzs.supabase.co/functions/v1/daily-sales-processor (V3)
-- **Frontend (Corrigido)**: https://qyg2rlztdr7v.space.minimax.io
+- **Frontend (Divisao Corrigida)**: https://qyg2rlztdr7v.space.minimax.io
+- **Frontend (Com Cupons)**: https://4f0pc2kyperq.space.minimax.io
 - **Frontend (Antigo)**: https://jr8u6daf8fre.space.minimax.io
 
 ### Sistema Pronto Para Uso
@@ -203,9 +204,49 @@ O sistema pode ser utilizado imediatamente:
 4. Backend 100% funcional com calculos corretos
 5. Interface frontend com labels desatualizados (rebuild necessario)
 
-#### Testes
-- [ ] Testar divisão automática de vendas
-- [ ] Testar geração de QR codes PIX
-- [ ] Testar CRON job de repasses
-- [ ] Testar validação de CPF
-- [ ] Testar dashboard financeiro
+## ✅ NOVA FUNCIONALIDADE: SISTEMA DE CUPONS (2025-11-03 10:53)
+
+### Backend Completo
+- [x] 3 novas tabelas criadas: discount_coupons, coupon_usage, influencer_credits
+- [x] 2 Edge Functions deployadas e testadas:
+  - coupon-manager (v1): criar, validar, aplicar, listar cupons
+  - influencer-credit-manager (v1): gerenciar creditos de influencers
+- [x] Cupons de teste criados: TESTE10 (R$10), TESTE15 (15%)
+- [x] Influencer teste: CPF 12345678900 com R$50 em creditos
+
+### Frontend Implementado e Corrigido
+- [x] CouponManager.tsx (636 linhas) - 4 abas completas
+- [x] Integrado no AdminApp.tsx (nova aba "Cupons")
+- [x] PaymentScreen.tsx atualizado com validacao de cupons
+- [x] CORRECAO CRITICA: CPF validation fix (user.cpf -> user.cpf_data?.cpf)
+- [x] Build bem-sucedido (230.11 kB index bundle)
+- [x] Todos os icones faltantes adicionados ao StatIcons.tsx
+
+### Funcionalidades
+- Criar cupons: valor fixo, percentual, credito influencer
+- Validar cupons por codigo, CPF, valor minimo
+- Gerenciar creditos de influencers
+- Historico completo de uso
+- Controle de limite de usos e validade
+- Ativar/desativar cupons
+
+### Testes Executados
+- [x] Criacao de cupom TESTE10 (valor fixo R$10)
+- [x] Criacao de cupom TESTE15 (15% desconto)
+- [x] Adicao de creditos para influencer
+- [x] Validacao de cupom com sucesso
+
+### Documentacao
+- Criado: /workspace/SISTEMA_CUPONS_IMPLEMENTACAO.md (389 linhas)
+
+#### Testes Realizados e Validados (2025-11-03 11:26)
+- [x] Sistema de cupons: Backend testado e funcional
+- [x] Validacao CPF corrigida: user.cpf_data?.cpf aplicado (linha 82)
+- [x] Build completo: 230.11 kB bundle size
+- [x] Deploy: https://nzy8mg51g4b3.space.minimax.io
+- [x] API coupon-manager: Validacao 200 OK (TESTE10 R$ 10 desconto)
+- [x] Edge Function daily-sales-processor: Divisao calculada sobre valor COM desconto
+- [x] Calculo matematico: Todos valores corretos (R$ 100 = R$ 81 padaria + R$ 9.70 entregador + R$ 9.30 plataforma)
+- [x] Banco de dados: Registro salvo corretamente
+- [x] Integracao completa: finalTotal com desconto passado para processSalesDivision
+- [ ] Teste browser UI: Servico indisponivel (teste manual recomendado)

@@ -65,14 +65,66 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ user, bakery, basket, sel
         return { totalItemCost, totalDeliveryFee, serviceFee, finalTotal };
     }, [bakery, basket, packageDetails, discount]);
     
-    const handleApplyCoupon = () => {
+    const handleApplyCoupon = async () => {
         setCouponError('');
-        if (couponCode.toUpperCase() === 'PDK10') {
-            const newDiscount = totalItemCost * 0.10; // 10% off items
-            setDiscount(newDiscount);
-        } else {
-            setDiscount(0);
-            setCouponError('Cupom inválido.');
+        setDiscount(0);
+        
+        if (!couponCode.trim()) {
+            setCouponError('Digite um codigo de cupom.');
+            return;
+        }
+
+        try {
+            // Obter CPF do usuario (pode estar em diferentes lugares)
+            let customerCpf = '';
+            
+            // Tentar obter CPF do perfil do usuario
+            if (user.cpf_data?.cpf) {
+                customerCpf = user.cpf_data.cpf;
+            } else {
+                // Tentar buscar CPF da tabela customer_cpf_data
+                const { data: cpfData } = await supabase
+                    .from('customer_cpf_data')
+                    .select('cpf')
+                    .eq('customer_id', user.id)
+                    .single();
+                
+                if (cpfData?.cpf) {
+                    customerCpf = cpfData.cpf;
+                } else {
+                    // Se nao houver CPF, usar ID do usuario como fallback
+                    // Isso permite cupons genericos sem restricao de CPF
+                    customerCpf = user.id;
+                    console.log('CPF nao encontrado, usando user.id como fallback');
+                }
+            }
+
+            // Validar cupom via Edge Function
+            const { data, error } = await supabase.functions.invoke('coupon-manager', {
+                body: {
+                    action: 'validate',
+                    code: couponCode,
+                    customerCpf: customerCpf,
+                    orderAmount: finalTotal
+                }
+            });
+
+            if (error) throw error;
+
+            const validation = data.data;
+
+            if (validation.valid) {
+                const discountAmount = parseFloat(validation.coupon.discountAmount);
+                setDiscount(discountAmount);
+                toast.success(`Cupom aplicado! Desconto: R$ ${discountAmount.toFixed(2)}`);
+            } else {
+                setCouponError(validation.message || 'Cupom invalido');
+                toast.error(validation.message || 'Cupom invalido');
+            }
+        } catch (error: any) {
+            console.error('Erro ao validar cupom:', error);
+            setCouponError('Erro ao validar cupom. Tente novamente.');
+            toast.error('Erro ao validar cupom');
         }
     };
     

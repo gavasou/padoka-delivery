@@ -22,6 +22,7 @@ import AdvancedAdminPanel from './AdvancedAdminPanel';
 import BankingManager from './BankingManager';
 import PIXPaymentSystem from './PIXPaymentSystem';
 import FinancialDashboard from './FinancialDashboard';
+import CouponManager from './CouponManager';
 
 interface AdminAppProps {
   user: User;
@@ -610,6 +611,7 @@ const AdminApp: React.FC<AdminAppProps> = ({ user, onLogout }) => {
         { id: 'advanced-controls', label: 'Controles', icon: <IconCpu /> },
         { id: 'registrations', label: 'Cadastros', icon: <IconUserCheck /> },
         { id: 'marketing', label: 'Marketing', icon: <IconMegaphone /> },
+        { id: 'cupons', label: 'Cupons', icon: <IconTicket /> },
         { id: 'leads', label: 'Leads', icon: <IconTarget /> },
         { id: 'whatsapp', label: 'WhatsApp', icon: <IconCash /> },
         { id: 'ai-maintenance', label: 'IA Manutenção', icon: <IconSparkles /> },
@@ -634,6 +636,7 @@ const AdminApp: React.FC<AdminAppProps> = ({ user, onLogout }) => {
             case 'system-monitor': return <SystemMonitor user={user} />;
             case 'advanced-controls': return <AdvancedAdminPanel user={user} />;
             case 'marketing': return <MarketingView />;
+            case 'cupons': return <CouponManager />;
             case 'leads': return <LeadsView />;
             case 'whatsapp': return <WhatsAppIntegration user={user} />;
             case 'ai-maintenance': return <AIMaintenancePanel user={user} />;
