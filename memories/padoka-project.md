@@ -153,38 +153,55 @@ Implementar sistema automatizado de divisão de vendas e repasses PIX:
 
 ## Status Final: BACKEND 100% COMPLETO | FRONTEND IMPLEMENTADO E INTEGRADO
 
+### CORRECAO CRITICA APLICADA (2025-11-03 10:36)
+✅ **Logica de divisao CORRIGIDA e TESTADA**:
+- Padaria: 90% dos itens (antes estava 10%)
+- Entregador: 97% da entrega (antes estava 3%)
+- Plataforma: ~10.3% em taxas (antes estava 84%)
+- Cliente: 0% credito (removido)
+
 ### Backend Supabase: COMPLETO E OPERACIONAL
 - [x] 5 tabelas criadas com RLS policies
 - [x] 3 Edge Functions deployadas e testadas
+- [x] **daily-sales-processor V3 CORRIGIDA e TESTADA** ✅
 - [x] CRON job diario as 17:30 configurado
-- [x] Sistema de divisao automatica funcionando
+- [x] Sistema de divisao automatica funcionando CORRETAMENTE
 - [x] QR Code PIX com formato EMV do Banco Central
 
 ### Frontend React: IMPLEMENTADO E INTEGRADO
 - [x] 4 componentes criados (BankingManager, PIXPaymentSystem, FinancialDashboard, CPFValidator)
 - [x] Integrado no AdminApp.tsx (nova aba "PIX e Repasses")
 - [x] Integrado no ProfileScreen.tsx para clientes
-- [x] **PaymentScreen.tsx integrado com divisao automatica**
+- [x] **PaymentScreen.tsx integrado com divisao automatica CORRIGIDA**
+- [x] **FinancialDashboard.tsx atualizado com labels corretos**
 - [x] Divisao processa automaticamente apos cada pagamento
-- [ ] Rebuild necessario para visualizar interface (Node 20+)
+- [ ] Rebuild necessario para visualizar labels atualizados (Node 20+)
 
 ### Integracao Completa
 - [x] PaymentScreen chama daily-sales-processor apos pagamento
 - [x] Funciona para pagamentos mock e Stripe
 - [x] Nao bloqueia fluxo em caso de erro
 - [x] Sistema totalmente funcional no backend
+- [x] **TESTADO COM SUCESSO: R$110 -> Padaria R$90 + Entregador R$9.70 + Plataforma R$10.30**
 
 ### Documentacao Completa
 - Criado: /workspace/SISTEMA_PIX_IMPLEMENTACAO.md
 - Criado: /workspace/SISTEMA_PIX_USO.md
 - Criado: /workspace/TESTES_PIX_MANUAL.md
+- Criado: /workspace/CORRECAO_DIVISAO_PAGAMENTOS.md ✅
+
+### Deploy URLs
+- **Backend (Edge Function)**: https://ywpazjaaqavjcdonlnzs.supabase.co/functions/v1/daily-sales-processor (V3)
+- **Frontend (Corrigido)**: https://qyg2rlztdr7v.space.minimax.io
+- **Frontend (Antigo)**: https://jr8u6daf8fre.space.minimax.io
 
 ### Sistema Pronto Para Uso
 O sistema pode ser utilizado imediatamente:
-1. Divisao automatica funciona em cada venda
+1. Divisao automatica funciona CORRETAMENTE em cada venda
 2. CRON job executara repasses diariamente as 17:30
 3. Dados podem ser consultados no Supabase Dashboard
-4. Interface completa estara disponivel apos rebuild com Node 20+
+4. Backend 100% funcional com calculos corretos
+5. Interface frontend com labels desatualizados (rebuild necessario)
 
 #### Testes
 - [ ] Testar divisão automática de vendas

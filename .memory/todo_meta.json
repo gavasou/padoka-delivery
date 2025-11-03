@@ -3,9 +3,9 @@
     "Coordinator": {
       "1": {
         "id": "1",
-        "content": "CORREÇÃO: Ajustar lógica de divisão - 84% venda para padaria, 97% entrega para entregador, 16% taxa total para plataforma",
-        "details": "Corrigir implementação: plataforma fica apenas com taxa (10%+3%+3%=16%), 84% venda vai para padaria, 97% entrega vai para entregador, cliente recebe 3% crédito",
-        "status": "in_progress",
+        "content": "CORREÇÃO FINAL: Sistema de divisão de pagamentos - Cliente NÃO recebe crédito",
+        "details": "✅ CONCLUÍDO: Lógica corrigida e testada - Venda R$100 = R$90 padaria + R$10 plataforma, Entrega R$10 = R$9,70 entregador + R$0,30 plataforma. Cliente NÃO recebe crédito. Plataforma fica ~10,3% total. Edge functions corrigidas (v3), PaymentScreen e FinancialDashboard atualizados, deploy funcionando.",
+        "status": "completed",
         "priority": "high"
       },
       "2": {

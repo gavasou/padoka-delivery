@@ -34,22 +34,22 @@ Deno.serve(async (req) => {
       throw new Error('Configuracao do Supabase ausente');
     }
 
-    // LÓGICA CORRETA: Plataforma recebe APENAS as taxas (16% total)
+    // LÓGICA CORRETA: Plataforma recebe APENAS taxas (~10.3% total)
+    // Cliente NÃO recebe crédito
     // Se não houver separação, assume 80% itens e 20% entrega
     const amount = parseFloat(totalAmount);
     const itemsAmount = itemsTotal ? parseFloat(itemsTotal) : amount * 0.80;
     const deliveryAmount = deliveryTotal ? parseFloat(deliveryTotal) : amount * 0.20;
 
-    // Taxas da plataforma (16% total)
+    // Taxas da plataforma (APENAS 10% + 3%)
     const platformFeeFromItems = itemsAmount * 0.10;     // 10% dos itens
     const platformFeeFromDelivery = deliveryAmount * 0.03; // 3% da entrega
-    const platformFeeFromCustomer = amount * 0.03;       // 3% para crédito do cliente
-    const platformAmount = platformFeeFromItems + platformFeeFromDelivery + platformFeeFromCustomer;
+    const platformAmount = platformFeeFromItems + platformFeeFromDelivery;
 
-    // Valores para beneficiários (84% total)
+    // Valores para beneficiários
     const bakeryAmount = itemsAmount - platformFeeFromItems;  // 90% dos itens
     const deliveryPersonAmount = deliveryId ? (deliveryAmount - platformFeeFromDelivery) : 0; // 97% da entrega
-    const customerCreditAmount = customerId ? platformFeeFromCustomer : 0; // 3% de crédito
+    const customerCreditAmount = 0; // Cliente NÃO recebe crédito
 
     // Inserir registro de divisão diária
     const divisionData = {
@@ -86,25 +86,18 @@ Deno.serve(async (req) => {
     const divisionResult = await insertResponse.json();
     const division = divisionResult[0];
 
-    // Atualizar créditos do cliente se houver
-    if (customerId && customerCreditAmount > 0) {
-      await updateCustomerCredits(
-        supabaseUrl,
-        serviceRoleKey,
-        customerId,
-        customerCreditAmount
-      );
-    }
+    // Cálculo da taxa efetiva da plataforma
+    const platformPercentage = ((platformAmount / amount) * 100).toFixed(2);
 
     return new Response(JSON.stringify({
       data: {
         division,
         breakdown: {
           total: amount.toFixed(2),
-          platform: platformAmount.toFixed(2) + ' (16% taxas)',
-          bakery: bakeryAmount.toFixed(2) + ' (90% itens)',
-          delivery: deliveryPersonAmount.toFixed(2) + ' (97% entrega)',
-          customerCredit: customerCreditAmount.toFixed(2) + ' (3% credito)'
+          platform: platformAmount.toFixed(2) + ` (${platformPercentage}% em taxas)`,
+          bakery: bakeryAmount.toFixed(2) + ' (90% dos itens)',
+          delivery: deliveryPersonAmount.toFixed(2) + ' (97% da entrega)',
+          customerCredit: '0.00 (sem credito)'
         }
       }
     }), {
@@ -125,58 +118,3 @@ Deno.serve(async (req) => {
     });
   }
 });
-
-// Atualiza créditos do cliente
-async function updateCustomerCredits(
-  supabaseUrl: string,
-  serviceRoleKey: string,
-  customerId: string,
-  creditAmount: number
-) {
-  // Buscar dados atuais do cliente
-  const selectResponse = await fetch(
-    `${supabaseUrl}/rest/v1/customer_cpf_data?customer_id=eq.${customerId}`,
-    {
-      headers: {
-        'Authorization': `Bearer ${serviceRoleKey}`,
-        'apikey': serviceRoleKey
-      }
-    }
-  );
-
-  if (!selectResponse.ok) {
-    throw new Error('Erro ao buscar dados do cliente');
-  }
-
-  const customerData = await selectResponse.json();
-  
-  if (customerData.length === 0) {
-    return; // Cliente não tem CPF cadastrado
-  }
-
-  const customer = customerData[0];
-  const newBalance = (parseFloat(customer.credits_balance) || 0) + creditAmount;
-  const newTotalEarned = (parseFloat(customer.total_credits_earned) || 0) + creditAmount;
-
-  // Atualizar saldo
-  const updateResponse = await fetch(
-    `${supabaseUrl}/rest/v1/customer_cpf_data?customer_id=eq.${customerId}`,
-    {
-      method: 'PATCH',
-      headers: {
-        'Authorization': `Bearer ${serviceRoleKey}`,
-        'apikey': serviceRoleKey,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        credits_balance: newBalance,
-        total_credits_earned: newTotalEarned,
-        updated_at: new Date().toISOString()
-      })
-    }
-  );
-
-  if (!updateResponse.ok) {
-    throw new Error('Erro ao atualizar creditos do cliente');
-  }
-}

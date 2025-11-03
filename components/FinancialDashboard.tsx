@@ -186,16 +186,18 @@ export default function FinancialDashboard({ userId, userRole }: Props) {
             <p className="text-sm opacity-75 mt-2">Repasses para entregadores</p>
           </div>
 
-          <div className="bg-gradient-to-br from-amber-500 to-amber-600 rounded-lg p-6 text-white">
-            <p className="text-sm opacity-90 mb-1">Creditos Clientes (3%)</p>
-            <p className="text-3xl font-bold">R$ {summary.totalCustomerCredits.toFixed(2)}</p>
-            <p className="text-sm opacity-75 mt-2">Creditos gerados</p>
-          </div>
-
           <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-lg p-6 text-white">
-            <p className="text-sm opacity-90 mb-1">Plataforma (16%)</p>
+            <p className="text-sm opacity-90 mb-1">Plataforma (~10.3%)</p>
             <p className="text-3xl font-bold">R$ {summary.totalPlatformShare.toFixed(2)}</p>
             <p className="text-sm opacity-75 mt-2">Taxas da plataforma</p>
+          </div>
+
+          <div className="bg-gradient-to-br from-amber-500 to-amber-600 rounded-lg p-6 text-white">
+            <p className="text-sm opacity-90 mb-1">Taxa Efetiva</p>
+            <p className="text-3xl font-bold">
+              {summary.totalSales > 0 ? ((summary.totalPlatformShare / summary.totalSales) * 100).toFixed(2) : '0.00'}%
+            </p>
+            <p className="text-sm opacity-75 mt-2">Percentual da plataforma</p>
           </div>
 
           <div className="bg-gradient-to-br from-gray-600 to-gray-700 rounded-lg p-6 text-white">
@@ -218,7 +220,6 @@ export default function FinancialDashboard({ userId, userRole }: Props) {
                     <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700">Venda Total</th>
                     <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700">Padaria</th>
                     <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700">Entregador</th>
-                    <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700">Cliente</th>
                     <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700">Plataforma</th>
                     <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700">Status</th>
                   </tr>
@@ -237,9 +238,6 @@ export default function FinancialDashboard({ userId, userRole }: Props) {
                       </td>
                       <td className="px-4 py-3 text-right text-sm text-purple-600">
                         R$ {parseFloat(division.delivery_amount.toString()).toFixed(2)}
-                      </td>
-                      <td className="px-4 py-3 text-right text-sm text-amber-600">
-                        R$ {parseFloat(division.customer_credit_amount.toString()).toFixed(2)}
                       </td>
                       <td className="px-4 py-3 text-right text-sm text-indigo-600">
                         R$ {parseFloat(division.platform_amount.toString()).toFixed(2)}
