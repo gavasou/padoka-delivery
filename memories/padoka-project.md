@@ -250,3 +250,60 @@ O sistema pode ser utilizado imediatamente:
 - [x] Banco de dados: Registro salvo corretamente
 - [x] Integracao completa: finalTotal com desconto passado para processSalesDivision
 - [ ] Teste browser UI: Servico indisponivel (teste manual recomendado)
+
+## SISTEMA DE OTIMIZACAO DE ROTAS - IMPLEMENTADO (2025-11-03 15:52)
+
+### Status: COMPLETO E DEPLOYADO
+
+#### Backend Supabase
+- [x] Migration aplicada: route_optimization_system_v3
+  - Tabela deliveries expandida (latitude, longitude, delivery_value, priority_level, estimated_duration, zone_id)
+  - Tabela delivery_routes criada
+  - Tabela route_opportunities criada
+  - RLS policies configuradas
+  - Indices criados para performance
+
+#### Edge Functions Deployadas
+- [x] optimize-delivery-route (Function ID: 95a44c19-455c-45ab-a85f-fb28a4d3a38f)
+  - URL: https://ywpazjaaqavjcdonlnzs.supabase.co/functions/v1/optimize-delivery-route
+  - Algoritmo Nearest Neighbor + otimizacao tempo/valor
+  - Capacidade maxima: 8 entregas
+  - Filtro horarios: 6-10h e 15-18h
+  
+- [x] find-nearby-deliveries (Function ID: 887a64e2-5709-4fcf-831c-2861e47209bb)
+  - URL: https://ywpazjaaqavjcdonlnzs.supabase.co/functions/v1/find-nearby-deliveries
+  - Busca entregas proximas (raio 5km)
+  - Cria notificacoes automaticas de oportunidades
+  - Calcula metricas de valor/km
+
+#### Frontend Implementado
+- [x] DeliveryManager.tsx expandido (431 linhas)
+  - Secao "Otimizar Rota" com UI destacada
+  - Botao "Calcular Rota Otimizada"
+  - Botao "Buscar Proximas"
+  - Exibicao de metricas (distancia, valor, tempo)
+  - Lista de entregas sugeridas com aceitar/recusar
+  - Oportunidades proximas com alertas visuais
+  - Justificativas de otimizacao
+
+#### Funcionalidades
+- Otimizacao de rota por Nearest Neighbor
+- Combinacao tempo/lucro (60% tempo, 40% valor)
+- Busca de entregas proximas em tempo real
+- Sistema de notificacoes de oportunidades
+- Metricas: lucro/km, eficiencia, distancia total
+- Aceitacao rapida de entregas sugeridas
+- Integracao com Google Maps existente
+
+#### Deploy
+- [x] Build concluido: 853.94 KiB (28 entries)
+- [x] Deploy URL: https://2igvj7ycrbow.space.minimax.io
+- [x] Sistema pronto para teste de producao
+
+#### Documentacao
+- [x] /workspace/docs/SISTEMA_OTIMIZACAO_ROTAS.md (391 linhas)
+  - Arquitetura completa
+  - API endpoints
+  - Algoritmos de otimizacao
+  - Guia de testes
+  - Metricas de sucesso
