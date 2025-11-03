@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "name": "padoka-delivery-pwa",
   "alias": ["padoka", "padoka-app", "padoka-delivery"],
   "builds": [
@@ -45,6 +45,19 @@
   ],
   "headers": [
     {
+      "source": "/(.*\\.(js|css))",
+      "headers": [
+        {
+          "key": "Content-Encoding",
+          "value": "gzip, br"
+        },
+        {
+          "key": "Vary",
+          "value": "Accept-Encoding"
+        }
+      ]
+    },
+    {
       "source": "/(.*)",
       "headers": [
         {
@@ -78,11 +91,6 @@
       ]
     }
   ],
-  "functions": {
-    "app/api/**/*.js": {
-      "maxDuration": 30
-    }
-  },
   "regions": ["iad1", "sfo1"],
   "github": {
     "silent": true
