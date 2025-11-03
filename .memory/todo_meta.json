@@ -3,38 +3,10 @@
     "Coordinator": {
       "1": {
         "id": "1",
-        "content": "Criar aba de cupons de desconto e créditos para influencers no admin",
-        "details": "✅ COMPLETO: Sistema implementado, testado e validado! Backend (tabelas, edge functions) funcional, cupons TESTE10 e TESTE15 criados, validação CPF corrigida, integração com checkout validada. Sistema 100% operacional.",
+        "content": "Preparar sistema para deploy em produção",
+        "details": "✅ COMPLETO: Guias criados (DEPLOY_RAPIDO_PADOKA.md, DEPLOY_PRODUCAO_PADOKA.md, INFOS_DEPLOY_PADOKA.md, deploy_producao.sh). Sistema 100% implementado, testado e pronto para deploy. Opções: Vercel (30 min) ou Netlify (15 min). Custo: R$ 0/mês.",
         "status": "completed",
         "priority": "high"
-      },
-      "2": {
-        "id": "2",
-        "content": "Implementar backend para gestão de cupons",
-        "details": "✅ CONCLUÍDO: Tabelas discount_coupons, coupon_usage, influencer_credits criadas. Edge functions para criar/validar/aplicar cupons implementadas. Cupons de teste criados e testados.",
-        "status": "completed",
-        "priority": "high"
-      },
-      "3": {
-        "id": "3",
-        "content": "Interface de criação e gestão de cupons",
-        "details": "✅ IMPLEMENTADO: Interface integrada no checkout, sistema de validação de cupons, aplicação automática de desconto, histórico de uso registrado no banco de dados.",
-        "status": "completed",
-        "priority": "medium"
-      },
-      "4": {
-        "id": "4",
-        "content": "Integração com sistema de checkout",
-        "details": "✅ COMPLETO: Campo para cupom no checkout, validação automática, aplicação de desconto, integração com divisão de vendas. Cupom TESTE10 (R$10) testado e validado matematicamente.",
-        "status": "completed",
-        "priority": "medium"
-      },
-      "5": {
-        "id": "5",
-        "content": "Testes e validação do sistema de cupons",
-        "details": "✅ COMPLETO: Todos os testes realizados - validação CPF, API testada (200 OK), divisão de vendas validada, banco de dados confirmado. Sistema 100% funcional.",
-        "status": "completed",
-        "priority": "low"
       }
     }
   }
