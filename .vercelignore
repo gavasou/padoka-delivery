@@ -1,0 +1,68 @@
+# Arquivos de desenvolvimento
+.env.local
+.env.development
+.env.production
+.env
+
+# Dependências
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Build local
+.cache/
+dist-local/
+coverage/
+.nyc_output/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Documentação
+*.md
+docs/
+guides/
+
+# Testes
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+__tests__/
+coverage/
+
+# Scripts
+*.sh
+bash/
+scripts/deploy*.sh
+
+# Arquivos temporários
+tmp/
+temp/
+.tmp/
+
+# Logs
+logs/
+*.log
+
+# Backup
+*.backup
+*.bak
+
+# Extra
+**.gitignore
+**.eslintrc*
+**.prettierrc*
+vite.config.ts.timestamp-*
+tsconfig.json.timestamp-*
