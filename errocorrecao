@@ -1,0 +1,5 @@
+# 1. Permissões
+chmod +x *.sh
+
+# 2. Deploy limpo (recomendado)
+./deploy_final_limpo.sh
