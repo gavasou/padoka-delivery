@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+import supabase from '../lib/supabase';
 import { IconTicket, IconGift, IconUser, IconPlus, IconCheck, IconX, IconClock, IconTrendingUp } from './StatIcons';
 
 interface Coupon {

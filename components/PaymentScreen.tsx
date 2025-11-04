@@ -6,7 +6,7 @@ import type { Bakery, Product, PackageType, ReceiptData, User } from '../types';
 import { IconChevronLeft, IconCreditCard, IconPix, IconBarcode, IconWallet, IconCheckCircle } from './StatIcons';
 import { calculateDeliveryFee, calculateServiceFee } from '../services/feeService';
 import { getStripe, createStripeSubscription, createStripePayment } from '../services/stripeService';
-import { supabase } from '../lib/supabase';
+import supabase from '../lib/supabase';
 
 type Basket = { [productId: string]: { product: Product; quantity: number } };
 

@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import type { User, Delivery, Product } from '../types';
 import { DeliveryStatus } from '../types';
 import { getDeliveryJobs, updateDeliveryStatus } from '../services/api';
-import { supabase } from '../lib/supabase';
+import supabase from '../lib/supabase';
 import { IconMapPin, IconClock, IconPackage, IconCheck, IconSparkles, IconMap } from './StatIcons';
 
 interface DeliveryManagerProps {
