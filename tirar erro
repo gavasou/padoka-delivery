@@ -1,0 +1,2 @@
+chmod +x deploy_final_limpo.sh
+./deploy_final_limpo.sh
