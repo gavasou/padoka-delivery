@@ -1,0 +1,1 @@
+git config --global --add safe.directory /workspace && git config --global user.email "suporte@padoka.app" && git config --global user.name "Padoka Deploy" && git add package.json vercel.json .gitignore && git commit -m "Fix: Correct Vercel build configuration" && git push https://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@github.com/gavasou/padoka-delivery.git master
