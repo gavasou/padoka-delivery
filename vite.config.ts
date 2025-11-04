@@ -31,52 +31,7 @@ export default defineConfig(({ mode }) => {
                   cacheName: 'google-fonts-webfonts',
                   expiration: {
                     maxEntries: 30,
-                    maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
-                  },
-                },
-              },
-              {
-                urlPattern: /^https:\/\/maps\.googleapis\.com\//,
-                handler: 'NetworkFirst',
-                options: {
-                  cacheName: 'google-maps-api',
-                  expiration: {
-                    maxEntries: 50,
-                    maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
-                  },
-                },
-              },
-              {
-                urlPattern: /^https:\/\/.*\.supabase\.co\/rest\//,
-                handler: 'NetworkFirst',
-                options: {
-                  cacheName: 'supabase-api',
-                  expiration: {
-                    maxEntries: 100,
-                    maxAgeSeconds: 60 * 60 * 24, // 1 day
-                  },
-                  networkTimeoutSeconds: 10,
-                },
-              },
-              {
-                urlPattern: /^https:\/\/.*\.supabase\.co\/storage\//,
-                handler: 'CacheFirst',
-                options: {
-                  cacheName: 'supabase-storage',
-                  expiration: {
-                    maxEntries: 200,
-                    maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
-                  },
-                },
-              },
-              {
-                urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/,
-                handler: 'CacheFirst',
-                options: {
-                  cacheName: 'images',
-                  expiration: {
-                    maxEntries: 100,
-                    maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+                    maxAgeSeconds: 60 * 60 * 24 * 365,
                   },
                 },
               },
@@ -111,28 +66,6 @@ export default defineConfig(({ mode }) => {
                 sizes: '512x512',
                 type: 'image/png',
                 purpose: 'any'
-              },
-              {
-                src: 'maskable-icon-512x512.png',
-                sizes: '512x512',
-                type: 'image/png',
-                purpose: 'maskable'
-              }
-            ],
-            shortcuts: [
-              {
-                name: 'Dashboard',
-                short_name: 'Dashboard',
-                description: 'Acesse seu painel principal',
-                url: '/dashboard',
-                icons: [{ src: 'pwa-192x192.png', sizes: '192x192' }]
-              },
-              {
-                name: 'Padarias',
-                short_name: 'Padarias',
-                description: 'Encontre padarias próximas',
-                url: '/location',
-                icons: [{ src: 'pwa-192x192.png', sizes: '192x192' }]
               }
             ]
           },
@@ -152,16 +85,11 @@ export default defineConfig(({ mode }) => {
         minify: 'terser',
         cssMinify: true,
         reportCompressedSize: true,
-        chunkSizeWarningLimit: 1000,
         rollupOptions: {
           output: {
             manualChunks: {
               vendor: ['react', 'react-dom'],
               ui: ['lucide-react', 'react-hot-toast'],
-              supabase: ['@supabase/supabase-js'],
-              stripe: ['@stripe/stripe-js', '@stripe/react-stripe-js'],
-              maps: ['@googlemaps/js-api-loader'],
-              google: ['@google/genai'],
             },
             assetFileNames: (assetInfo) => {
               const info = assetInfo.name.split('.');
