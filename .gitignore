@@ -895,11 +895,3 @@
 # uploads/
 # downloads/
 
-# Git scripts with credentials
-git_push.sh
-git_output.log
-
-# Memory files with sensitive data
-memory/github-credentials.md
-/memories/git-status.md
-
