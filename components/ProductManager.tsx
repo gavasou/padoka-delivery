@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenerativeAI, Type } from "@google/generative-ai";
 import type { User, Product } from '../types';
 // Fix: Removed getAIMarketingSuggestions as it's not suitable for this component's needs.
 import { getBakeryProducts, addProduct, updateProduct, removeProduct } from '../services/api';
@@ -190,7 +190,7 @@ const ProductManager: React.FC<ProductManagerProps> = ({ user }) => {
         }
 
         try {
-            const ai = new GoogleGenAI({ apiKey: API_KEY });
+            const ai = new GoogleGenerativeAI({ apiKey: API_KEY });
             const productList = products.map(p => p.name).join(', ');
             const prompt = `You are a product development expert for a bakery subscription app. Based on this list of existing products (${productList}), suggest two new, creative products that would complement the current offerings. For each, provide a short, enticing 'description', a suggested 'price' (as a number), and a 'name'. Return the response as a JSON array of objects.`;
 
