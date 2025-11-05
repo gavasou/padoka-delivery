@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { GoogleGenerativeAI, Type } from "@google/generative-ai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import type { User, Product } from '../types';
 // Fix: Removed getAIMarketingSuggestions as it's not suitable for this component's needs.
 import { getBakeryProducts, addProduct, updateProduct, removeProduct } from '../services/api';
@@ -200,13 +200,13 @@ const ProductManager: React.FC<ProductManagerProps> = ({ user }) => {
                 config: {
                     responseMimeType: "application/json",
                     responseSchema: {
-                        type: Type.ARRAY,
+                        type: "array",
                         items: {
-                            type: Type.OBJECT,
+                            type: "object",
                             properties: {
-                                name: { type: Type.STRING },
-                                description: { type: Type.STRING },
-                                price: { type: Type.NUMBER },
+                                name: { type: "string" },
+                                description: { type: "string" },
+                                price: { type: "number" },
                             },
                             required: ['name', 'description', 'price'],
                         },
