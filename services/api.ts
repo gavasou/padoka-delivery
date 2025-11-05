@@ -1,5 +1,5 @@
 
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenerativeAI, Type } from "@google/generative-ai";
 import { 
     MOCK_USERS, 
     MOCK_BAKERIES, 
@@ -322,7 +322,7 @@ export const getAIMarketingSuggestions = async (): Promise<AIMarketingSuggestion
             { title: "Manhã Parisiense", description: "Que tal um croissant quentinho? Sinta-se em Paris sem sair de casa. Peça já!", productName: "Croissant" }
         ]);
     }
-    const ai = new GoogleGenAI({ apiKey: API_KEY });
+    const ai = new GoogleGenerativeAI({ apiKey: API_KEY });
     const prompt = `You are a growth marketing expert for a bakery subscription app called Padoka. Based on our platform data (best-selling products: Pão Francês, Pão de Queijo; most popular bakery: Pão Quente & Cia), suggest two specific marketing campaigns. For each, provide a catchy title, a short description for the notification, and the productName to feature. Return the response as a JSON array of objects.`;
 
     try {
