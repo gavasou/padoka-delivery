@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Camera, Upload, X, Check, AlertCircle } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../services/supabase';
 
 interface ImageUploadProps {
   onImageUploaded: (url: string, publicUrl: string) => void;
