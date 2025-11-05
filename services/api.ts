@@ -1,5 +1,5 @@
 
-import { GoogleGenerativeAI, Type } from "@google/generative-ai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { 
     MOCK_USERS, 
     MOCK_BAKERIES, 
@@ -332,13 +332,13 @@ export const getAIMarketingSuggestions = async (): Promise<AIMarketingSuggestion
             config: {
                 responseMimeType: "application/json",
                 responseSchema: {
-                    type: Type.ARRAY,
+                    type: "array",
                     items: {
-                        type: Type.OBJECT,
+                        type: "object",
                         properties: {
-                            title: { type: Type.STRING },
-                            description: { type: Type.STRING },
-                            productName: { type: Type.STRING },
+                            title: { type: "string" },
+                            description: { type: "string" },
+                            productName: { type: "string" },
                         },
                         required: ['title', 'description', 'productName'],
                     },
