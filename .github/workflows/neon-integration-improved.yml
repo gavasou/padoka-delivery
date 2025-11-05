@@ -1,0 +1,125 @@
+name: Create/Delete Branch for Pull Request
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - closed
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  setup:
+    name: Setup
+    outputs:
+      branch: ${{ steps.branch_name.outputs.current_branch }}
+      pr_number: ${{ github.event.pull_request.number }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get branch name
+        id: branch_name
+        uses: tj-actions/branch-names@v8
+        with:
+          trimmed_unique_branch: true
+
+  create_neon_branch:
+    name: Create Neon Branch
+    outputs:
+      db_url: ${{ steps.create_neon_branch.outputs.db_url }}
+      db_url_with_pooler: ${{ steps.create_neon_branch.outputs.db_url_with_pooler }}
+      branch_name: ${{ steps.create_neon_branch.outputs.branch_name }}
+    needs: setup
+    if: |
+      github.event_name == 'pull_request' && (
+      github.event.action == 'synchronize'
+      || github.event.action == 'opened'
+      || github.event.action == 'reopened')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Get branch expiration date (2 weeks from now)
+        id: get_expiration_date
+        run: echo "EXPIRES_AT=$(date -u --date '+14 days' +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_ENV"
+
+      - name: Create Neon Branch
+        id: create_neon_branch
+        uses: neondatabase/create-branch-action@v6
+        with:
+          project_id: ${{ vars.NEON_PROJECT_ID }}
+          branch_name: preview/pr-${{ needs.setup.outputs.pr_number }}-${{ needs.setup.outputs.branch }}
+          api_key: ${{ secrets.NEON_API_KEY }}
+          expires_at: ${{ env.EXPIRES_AT }}
+
+      - name: Setup Database Environment
+        run: |
+          echo "DATABASE_URL=${{ steps.create_neon_branch.outputs.db_url_with_pooler }}" >> $GITHUB_ENV
+          echo "DATABASE_POOLER_URL=${{ steps.create_neon_branch.outputs.db_url_with_pooler }}" >> $GITHUB_ENV
+
+      - name: Comment PR with Database Info
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 🚀 Neon Database Branch Created
+            
+            **Branch:** \`${{ steps.create_neon_branch.outputs.branch_name }}\`
+            **Expires:** ${{ env.EXPIRES_AT }}
+            **Connection:** Available as \`DATABASE_URL\` environment variable
+            
+            You can now:
+            - Run migrations: \`npm run db:migrate\`
+            - Run tests: \`npm test\`
+            - Use DATABASE_URL in your CI/CD pipeline`
+            })
+
+      # Optional: Uncomment to run migrations automatically
+      # - name: Run Database Migrations
+      #   run: npm run db:migrate
+      #   env:
+      #     DATABASE_URL: ${{ steps.create_neon_branch.outputs.db_url_with_pooler }}
+
+      # Optional: Uncomment to enable schema diff analysis
+      # - name: Post Schema Diff Comment to PR
+      #   uses: neondatabase/schema-diff-action@v1
+      #   with:
+      #     project_id: ${{ vars.NEON_PROJECT_ID }}
+      #     compare_branch: ${{ steps.create_neon_branch.outputs.branch_name }}
+      #     api_key: ${{ secrets.NEON_API_KEY }}
+
+  delete_neon_branch:
+    name: Delete Neon Branch
+    needs: setup
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete Neon Branch
+        id: delete_neon_branch
+        uses: neondatabase/delete-branch-action@v3
+        with:
+          project_id: ${{ vars.NEON_PROJECT_ID }}
+          branch: preview/pr-${{ needs.setup.outputs.pr_number }}-${{ needs.setup.outputs.branch }}
+          api_key: ${{ secrets.NEON_API_KEY }}
+
+      - name: Comment PR with Deletion Info
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 🗑️ Neon Database Branch Deleted
+            
+            **Branch:** \`preview/pr-${{ needs.setup.outputs.pr_number }}-${{ needs.setup.outputs.branch }}\`
+            
+            The Neon database branch has been automatically deleted.`
+            })
