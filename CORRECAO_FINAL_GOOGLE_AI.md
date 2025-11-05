@@ -15,7 +15,11 @@
 #### 3. **Correção de Dependencies**
 - ✅ `package.json`: `"@google/genai": "1.28.0"` → `"@google/generative-ai": "^0.1.0"`
 
-#### 4. **Arquivos Adicionados**
+#### 4. **Correção CRÍTICA - Build Error**
+- ✅ `services/api.ts`: Removido import de `Type` (não disponível na versão ^0.1.0)
+- ✅ `services/api.ts`: Substituído `Type.ARRAY` → `"array"`, `Type.OBJECT` → `"object"`, `Type.STRING` → `"string"`
+
+#### 5. **Arquivos Adicionados**
 - ✅ `index.css`: Arquivo de estilos base para resolver referência quebrada
 
 ### 📋 Configurações do Netlify:
