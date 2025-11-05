@@ -1,0 +1,16 @@
+{
+  "name": "supabase-to-neon-migration",
+  "version": "1.0.0",
+  "description": "Migration script from Supabase to Neon (Netlify)",
+  "main": "migrate_supabase_to_neon.js",
+  "scripts": {
+    "migrate": "node migrate_supabase_to_neon.js",
+    "setup": "node setup.js"
+  },
+  "dependencies": {
+    "pg": "^8.11.3"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
