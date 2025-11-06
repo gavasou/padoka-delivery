@@ -81,7 +81,7 @@ const BakeryProfileScreen: React.FC<BakeryProfileScreenProps> = ({ user, onLogou
                                 bucketName="avatars"
                                 existingImage={owner.profileImageUrl}
                                 uploadPath={`user-${owner.id}`}
-                                maxSizeInMB={2}
+                                maxSizeInMB={25}
                                 disabled={false}
                             />
                         </div>
@@ -119,7 +119,7 @@ const BakeryProfileScreen: React.FC<BakeryProfileScreenProps> = ({ user, onLogou
                                 bucketName="bakery-images"
                                 existingImage={bakery.logoUrl}
                                 uploadPath={`bakery-${bakery.id}`}
-                                maxSizeInMB={10}
+                                maxSizeInMB={25}
                                 disabled={false}
                             />
                         </div>
