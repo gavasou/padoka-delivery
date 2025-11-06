@@ -63,7 +63,7 @@ const ProductFormModal: React.FC<{
                             bucketName="product-images"
                             existingImage={formData.imageUrl}
                             uploadPath={`bakery-${user.id}`}
-                            maxSizeInMB={5}
+                            maxSizeInMB={25}
                             disabled={false}
                         />
                         {!formData.imageUrl && (

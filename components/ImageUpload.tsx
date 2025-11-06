@@ -17,7 +17,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   bucketName,
   existingImage,
   uploadPath = 'uploads',
-  maxSizeInMB = 5,
+  maxSizeInMB = 25,
   acceptTypes = 'image/*',
   disabled = false
 }) => {
