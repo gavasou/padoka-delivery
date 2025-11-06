@@ -242,23 +242,64 @@ const MarketingView: React.FC = () => {
 
 const LeadsView: React.FC = () => {
     const [notifications, setNotifications] = useState<AppNotification[]>([]);
+    const [message, setMessage] = useState('');
+    const [selectedSegment, setSelectedSegment] = useState('Clientes Recentes');
+    
     useEffect(() => {
         getNotifications().then(setNotifications);
     }, []);
+    
+    const handleSubmitNotification = async () => {
+        if (!message.trim()) {
+            alert('Por favor, digite uma mensagem.');
+            return;
+        }
+        
+        try {
+            await sendNotification({
+                message,
+                segment: selectedSegment,
+                timestamp: new Date().toISOString(),
+                opens: 0,
+                clicks: 0
+            });
+            
+            // Reset form
+            setMessage('');
+            setSelectedSegment('Clientes Recentes');
+            
+            // Refresh notifications
+            getNotifications().then(setNotifications);
+            
+            alert('Notificação enviada com sucesso!');
+        } catch (error) {
+            console.error('Error sending notification:', error);
+            alert('Erro ao enviar notificação.');
+        }
+    };
     
     return (
         <section>
              <h3 className="font-bold text-lg mb-3 text-brand-text">Ativação de Leads</h3>
              <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200/50 mb-6">
                 <h4 className="font-semibold text-brand-text mb-2">Enviar Nova Notificação</h4>
-                <textarea placeholder="Sua mensagem para os clientes..." rows={3}></textarea>
+                <textarea 
+                    placeholder="Sua mensagem para os clientes..." 
+                    rows={3}
+                    value={message}
+                    onChange={e => setMessage(e.target.value)}
+                ></textarea>
                 <div className="flex justify-between items-center mt-2">
-                    <select className="!p-2 text-sm">
+                    <select 
+                        className="!p-2 text-sm"
+                        value={selectedSegment}
+                        onChange={e => setSelectedSegment(e.target.value)}
+                    >
                         <option>Clientes Recentes</option>
                         <option>Assinantes Ativos</option>
                         <option>Todos os Clientes</option>
                     </select>
-                    <button className="primary !py-2 !px-4 text-sm">Enviar</button>
+                    <button onClick={handleSubmitNotification} className="primary !py-2 !px-4 text-sm">Enviar</button>
                 </div>
              </div>
               <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200/50">
@@ -324,9 +365,19 @@ const ModerationView: React.FC = () => {
 
 const BakeriesView: React.FC = () => {
     const [bakeries, setBakeries] = useState<Bakery[]>([]);
+    const [selectedBakery, setSelectedBakery] = useState<Bakery | null>(null);
+    
     useEffect(() => {
         getAllBakeriesForAdmin().then(setBakeries);
     }, []);
+    
+    const handleViewBakery = (bakery: Bakery) => {
+        setSelectedBakery(bakery);
+    };
+    
+    const closeBakeryDetail = () => {
+        setSelectedBakery(null);
+    };
 
     return (
         <section>
@@ -338,10 +389,54 @@ const BakeriesView: React.FC = () => {
                             <p className="font-semibold text-brand-text">{bakery.name}</p>
                             <p className="text-xs text-brand-text-secondary">{bakery.activeSubscriptions} assinantes</p>
                         </div>
-                        <button className="text-sm font-semibold text-brand-secondary flex items-center gap-1"><IconEye className="w-4 h-4" /> Visualizar</button>
+                        <button onClick={() => handleViewBakery(bakery)} className="text-sm font-semibold text-brand-secondary flex items-center gap-1"><IconEye className="w-4 h-4" /> Visualizar</button>
                     </div>
                 ))}
             </div>
+            
+            {/* Bakery Detail Modal */}
+            {selectedBakery && (
+                <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 animate-fade-in">
+                    <div className="bg-white rounded-2xl p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto">
+                        <div className="flex justify-between items-start mb-4">
+                            <h2 className="text-xl font-bold text-brand-text">Detalhes da Padaria</h2>
+                            <button onClick={closeBakeryDetail} className="text-gray-500 hover:text-gray-700">
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <div className="space-y-4">
+                            <div>
+                                <h3 className="font-bold text-lg text-brand-text mb-2">{selectedBakery.name}</h3>
+                                <p className="text-sm text-brand-text-secondary mb-1"><strong>Endereço:</strong> {selectedBakery.address}</p>
+                                <p className="text-sm text-brand-text-secondary mb-1"><strong>Assinantes Ativos:</strong> {selectedBakery.activeSubscriptions}</p>
+                                <p className="text-sm text-brand-text-secondary mb-1"><strong>Status:</strong> 
+                                    <span className={`ml-1 px-2 py-0.5 rounded-full text-xs font-semibold ${
+                                        selectedBakery.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
+                                    }`}>
+                                        {selectedBakery.status === 'active' ? 'Ativa' : 'Inativa'}
+                                    </span>
+                                </p>
+                            </div>
+                            
+                            {selectedBakery.description && (
+                                <div>
+                                    <h4 className="font-semibold text-brand-text mb-1">Descrição</h4>
+                                    <p className="text-sm text-brand-text-secondary">{selectedBakery.description}</p>
+                                </div>
+                            )}
+                            
+                            <div className="pt-4 border-t">
+                                <p className="text-xs text-brand-text-secondary">
+                                    ID: {selectedBakery.id}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </section>
     );
 };

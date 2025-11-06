@@ -3,7 +3,7 @@ import { supabase } from '../services/supabase';
 import { 
   IconMessageCircle, IconSend, IconUsers, IconCircle, 
   IconPhone, IconVideo, IconPaperclip, IconSearch,
-  IconSettings, IconExit, IconCheck, IconClock
+  IconSettings, IconExit, IconCheck, IconClock, IconX
 } from './StatIcons';
 import type { User } from '../types';
 
@@ -88,7 +88,8 @@ const getRoleLabel = (role: TeamMember['role']) => {
 const MemberList: React.FC<{ 
   members: TeamMember[];
   onStartPrivateChat: (member: TeamMember) => void;
-}> = ({ members, onStartPrivateChat }) => {
+  onSettings?: () => void;
+}> = ({ members, onStartPrivateChat, onSettings }) => {
   const [search, setSearch] = useState('');
 
   const filteredMembers = members.filter(member =>
@@ -100,7 +101,11 @@ const MemberList: React.FC<{
     <div className="bg-white rounded-xl p-4 border h-full">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-semibold text-brand-text">Equipe ({members.length})</h3>
-        <button className="text-brand-text-secondary hover:text-brand-text">
+        <button 
+          onClick={onSettings}
+          className="text-brand-text-secondary hover:text-brand-text"
+          title="Configurações da equipe"
+        >
           <IconSettings className="w-5 h-5" />
         </button>
       </div>
@@ -648,6 +653,7 @@ const TeamChat: React.FC<TeamChatProps> = ({ currentUser, onLogout }) => {
           <MemberList 
             members={members}
             onStartPrivateChat={handleStartPrivateChat}
+            onSettings={() => alert('Configurações da equipe em breve!')}
           />
         </div>
       </div>

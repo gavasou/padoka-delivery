@@ -21,6 +21,23 @@ const DeliveryCard: React.FC<{ delivery: Delivery }> = ({ delivery }) => {
         // Here you would call an API, but for now, we just update the state
         setStatus(DeliveryStatus.DELIVERED);
     }
+
+    const handleViewRoute = () => {
+        // Open the delivery address in Google Maps
+        const encodedAddress = encodeURIComponent(delivery.address);
+        const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+        
+        // Try to open in native maps app first, fall back to web browser
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        if (isMobile) {
+            // For mobile devices, try to open in native Google Maps app
+            window.open(`googlemaps://maps?q=${encodedAddress}`, '_blank');
+        }
+        
+        // Always open in web browser as fallback or for desktop
+        window.open(googleMapsUrl, '_blank');
+    }
     
     const statusStyles = {
         [DeliveryStatus.PENDING]: "text-orange-800 bg-orange-100",
@@ -46,7 +63,9 @@ const DeliveryCard: React.FC<{ delivery: Delivery }> = ({ delivery }) => {
             </div>
             {status === DeliveryStatus.PENDING && (
                 <div className="mt-4 flex gap-3">
-                    <button className="flex-1 bg-amber-100 text-amber-800 font-bold py-2.5 px-4 rounded-xl hover:bg-amber-200 transition-colors">
+                    <button 
+                        onClick={handleViewRoute}
+                        className="flex-1 bg-amber-100 text-amber-800 font-bold py-2.5 px-4 rounded-xl hover:bg-amber-200 transition-colors">
                         Ver Rota
                     </button>
                     <button 

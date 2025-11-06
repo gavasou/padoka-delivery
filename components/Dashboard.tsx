@@ -30,7 +30,13 @@ const BakeryCard: React.FC<{ bakery: Bakery; onClick: () => void }> = ({ bakery,
                     </div>
                 </div>
             </div>
-            <button className="mt-4 w-full bg-brand-primary text-brand-secondary font-bold py-3 px-4 rounded-xl hover:bg-brand-primary/90 transition-colors shadow">
+            <button 
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onClick();
+                }}
+                className="mt-4 w-full bg-brand-primary text-brand-secondary font-bold py-3 px-4 rounded-xl hover:bg-brand-primary/90 transition-colors shadow"
+            >
                 Ver cardápio e assinar
             </button>
         </div>
