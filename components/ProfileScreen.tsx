@@ -8,7 +8,7 @@ import {
 import { 
     getClientFaqs, getClientAchievements, getGalleryImages, getClientChatMessages 
 } from '../services/api';
-import CPFValidator from './CPFValidator';
+
 
 interface ProfileScreenProps {
   user: User;
