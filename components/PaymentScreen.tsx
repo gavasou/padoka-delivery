@@ -296,6 +296,30 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ user, bakery, basket, sel
         handleConfirmPayment();
     };
 
+    // Clipboard copy functions
+    const handleCopyPixKey = async () => {
+        const pixKey = '00020126...d5030001';
+        try {
+            await navigator.clipboard.writeText(pixKey);
+            toast.success('Chave PIX copiada para a área de transferência!');
+        } catch (error) {
+            console.error('Erro ao copiar chave PIX:', error);
+            toast.error('Erro ao copiar chave PIX. Tente novamente.');
+        }
+    };
+
+    const handleCopyBoletoLine = async () => {
+        // Mock boleto line - in real implementation, this would be the actual line
+        const boletoLine = '00190.00009 01234.567890 12345.678901 1 12340000001234';
+        try {
+            await navigator.clipboard.writeText(boletoLine);
+            toast.success('Linha digitável copiada para a área de transferência!');
+        } catch (error) {
+            console.error('Erro ao copiar linha digitável:', error);
+            toast.error('Erro ao copiar linha digitável. Tente novamente.');
+        }
+    };
+
     const renderHeader = (title: string, onBackAction: () => void) => (
         <header className="p-4 bg-white sticky top-0 z-10 text-center border-b border-gray-200/80">
             <button onClick={onBackAction} className="absolute top-1/2 -translate-y-1/2 left-4 text-brand-secondary">
@@ -470,7 +494,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ user, bakery, basket, sel
                            <img src="https://i.imgur.com/g88v3h2.png" alt="QR Code" className="w-48 h-48 mx-auto" />
                            <p className="text-sm text-brand-text-secondary mt-4">Ou use a chave Pix Copia e Cola:</p>
                            <p className="text-xs bg-gray-100 p-2 rounded-lg font-mono my-2 break-all">00020126...d5030001</p>
-                           <button className="primary w-full">Copiar Chave</button>
+                           <button onClick={handleCopyPixKey} className="primary w-full">Copiar Chave</button>
                            <p className="text-sm font-semibold text-brand-text mt-6 animate-pulse">Aguardando confirmação do pagamento...</p>
                         </div>
                     </ViewContainer>
@@ -486,7 +510,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ user, bakery, basket, sel
                            <h3 className="font-bold text-brand-text mb-2">Boleto Gerado!</h3>
                            <p className="text-sm text-brand-text-secondary mb-4">Pague usando o código de barras abaixo. A confirmação pode levar até 2 dias úteis.</p>
                            <img src="https://i.imgur.com/uN2PoaD.png" alt="Código de Barras" className="w-full h-auto mx-auto" />
-                           <button className="primary w-full !mt-6">Copiar Linha Digitável</button>
+                           <button onClick={handleCopyBoletoLine} className="primary w-full !mt-6">Copiar Linha Digitável</button>
                         </div>
                     </ViewContainer>
                     </>

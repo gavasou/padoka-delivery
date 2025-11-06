@@ -23,7 +23,7 @@ const ReceiptScreen: React.FC<ReceiptScreenProps> = ({ receiptData, onDone }) =>
     <div className="flex flex-col h-full bg-brand-background">
       <header className="p-4 bg-white sticky top-0 z-10 text-center border-b border-gray-200/80">
         <h1 className="font-bold text-lg text-brand-text">Recibo do Pedido</h1>
-        <button className="absolute top-1/2 -translate-y-1/2 right-4 text-brand-secondary">
+        <button onClick={onDone} className="absolute top-1/2 -translate-y-1/2 right-4 text-brand-secondary">
           <IconPrinter className="w-6 h-6" />
         </button>
       </header>

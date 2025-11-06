@@ -67,6 +67,53 @@ const DeliveryProfileScreen: React.FC<DeliveryProfileScreenProps> = ({ user, onL
     const [achievements, setAchievements] = useState<Achievement[]>([]);
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
     const [loading, setLoading] = useState(false);
+    
+    // Form state for edit profile
+    const [editForm, setEditForm] = useState({
+        name: user.name || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        vehicle: user.vehicle || ''
+    });
+    
+    // Chat state
+    const [newMessage, setNewMessage] = useState('');
+    
+    const handleSaveProfile = async () => {
+        try {
+            // Here you would typically call an API to update the profile
+            // await updateDeliveryProfile(user.id, editForm);
+            alert('Perfil atualizado com sucesso!');
+            setView('main');
+        } catch (error) {
+            console.error('Erro ao salvar perfil:', error);
+            alert('Erro ao salvar perfil. Tente novamente.');
+        }
+    };
+    
+    const handleSendMessage = () => {
+        if (newMessage.trim()) {
+            const message: ChatMessage = {
+                id: Date.now().toString(),
+                sender: 'user',
+                text: newMessage,
+                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+            setChatMessages(prev => [...prev, message]);
+            setNewMessage('');
+            
+            // Simulate response after a short delay
+            setTimeout(() => {
+                const response: ChatMessage = {
+                    id: (Date.now() + 1).toString(),
+                    sender: 'support',
+                    text: 'Recebemos sua mensagem. Em breve entraremos em contato!',
+                    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                };
+                setChatMessages(prev => [...prev, response]);
+            }, 1000);
+        }
+    };
 
     useEffect(() => {
         const fetchData = async (fetcher: () => Promise<any>, setter: (data: any) => void) => {
@@ -139,11 +186,11 @@ const DeliveryProfileScreen: React.FC<DeliveryProfileScreenProps> = ({ user, onL
     switch (view) {
         case 'edit': return <SubViewContainer title="Editar Perfil">
             <div className="bg-white p-4 rounded-xl space-y-4">
-                <div><label className="text-sm font-medium">Nome</label><input type="text" defaultValue={user.name} /></div>
-                <div><label className="text-sm font-medium">Email</label><input type="email" defaultValue={user.email} /></div>
-                <div><label className="text-sm font-medium">Telefone</label><input type="tel" defaultValue={user.phone} /></div>
-                <div><label className="text-sm font-medium">Veículo</label><input type="text" defaultValue={user.vehicle} /></div>
-                <button className="primary w-full !mt-6">Salvar Alterações</button>
+                <div><label className="text-sm font-medium">Nome</label><input type="text" value={editForm.name} onChange={(e) => setEditForm({...editForm, name: e.target.value})} /></div>
+                <div><label className="text-sm font-medium">Email</label><input type="email" value={editForm.email} onChange={(e) => setEditForm({...editForm, email: e.target.value})} /></div>
+                <div><label className="text-sm font-medium">Telefone</label><input type="tel" value={editForm.phone} onChange={(e) => setEditForm({...editForm, phone: e.target.value})} /></div>
+                <div><label className="text-sm font-medium">Veículo</label><input type="text" value={editForm.vehicle} onChange={(e) => setEditForm({...editForm, vehicle: e.target.value})} /></div>
+                <button onClick={handleSaveProfile} className="primary w-full !mt-6">Salvar Alterações</button>
             </div>
         </SubViewContainer>;
         case 'achievements': return <SubViewContainer title="Minhas Conquistas">
@@ -183,8 +230,15 @@ const DeliveryProfileScreen: React.FC<DeliveryProfileScreenProps> = ({ user, onL
             </main>
             <footer className="p-2 bg-white border-t">
                 <div className="flex items-center">
-                    <input type="text" placeholder="Digite sua mensagem..." className="flex-1 !border-transparent focus:!ring-0" />
-                    <button className="p-2 rounded-full bg-brand-primary text-brand-secondary"><IconSend className="w-6 h-6" /></button>
+                    <input 
+                        type="text" 
+                        placeholder="Digite sua mensagem..." 
+                        className="flex-1 !border-transparent focus:!ring-0" 
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                    />
+                    <button onClick={handleSendMessage} className="p-2 rounded-full bg-brand-primary text-brand-secondary"><IconSend className="w-6 h-6" /></button>
                 </div>
             </footer>
         </div>;
