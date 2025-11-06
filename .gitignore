@@ -230,7 +230,8 @@
 
 # Gatsby files
 **/.cache/
-**/public
+# Vite projects need public directory for static assets
+!/public
 
 # Vue.js
 **/dist/
