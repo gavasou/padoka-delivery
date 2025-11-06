@@ -1,0 +1,4 @@
+cd /workspace/padoka-delivery
+git add .
+git commit -m "Fix: Location functionality and non-working buttons"
+git push origin main
