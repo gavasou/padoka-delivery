@@ -1,21 +1,29 @@
+# Netlify configuration for Padoka Delivery PWA
+# Fresh deployment setup for subdirectory project
+
 [build]
-  # Build command
+  # Base directory where the project is located
+  base = "padoka-delivery"
+  
+  # Build command - runs from the base directory
   command = "npm run build"
-  # Publish directory
+  
+  # Publish directory - relative to base directory
   publish = "dist"
+  
+  # Environment variables
+  [build.environment]
+    NODE_VERSION = "18.17"
+    NPM_VERSION = "9.0.0"
+    # Add any other environment variables needed for build
 
-[build.environment]
-  # Set Node.js version
-  NODE_VERSION = "18"
-  NPM_VERSION = "9"
-
-# Redirects for SPA routing
+# SPA Redirects - all routes should serve index.html
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
-# Headers for security and performance
+# Security headers for all routes
 [[headers]]
   for = "/*"
   [headers.values]
@@ -23,16 +31,60 @@
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(self), microphone=(), camera=()"
 
-# Cache static assets
+# Cache static assets aggressively
 [[headers]]
   for = "/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-# PWA headers
+# PWA files caching
 [[headers]]
   for = "/manifest.webmanifest"
   [headers.values]
     Content-Type = "application/manifest+json"
     Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Content-Type = "application/javascript"
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Service worker and offline support
+[[headers]]
+  for = "/workbox-*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Images and icons
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.svg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.ico"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Build processing optimization
+[build.processing]
+  skip_processing = false
+
+[build.processing.css]
+  bundle = true
+  minify = true
+
+[build.processing.js]
+  bundle = true
+  minify = true
+
+[build.processing.html]
+  pretty_urls = true
