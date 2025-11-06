@@ -198,7 +198,7 @@ export const PerformanceMonitor: React.FC = () => {
   useEffect(() => {
     // Log automático após 5 segundos
     const timer = setTimeout(() => {
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.MODE === 'development') {
         logMetrics();
       }
     }, 5000);
@@ -207,7 +207,7 @@ export const PerformanceMonitor: React.FC = () => {
   }, [logMetrics]);
 
   // Não renderizar nada em produção
-  if (process.env.NODE_ENV === 'production') {
+  if (import.meta.env.PROD) {
     return null;
   }
 

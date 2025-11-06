@@ -176,7 +176,7 @@ const ProductManager: React.FC<ProductManagerProps> = ({ user }) => {
     const handleGetSuggestions = async () => {
         setLoadingSuggestions(true);
         setAiError('');
-        const API_KEY = process.env.API_KEY;
+        const API_KEY = import.meta.env.VITE_API_KEY;
 
         if (!API_KEY) {
             // Fallback for when API key is not available
