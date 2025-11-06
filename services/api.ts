@@ -27,7 +27,7 @@ import {
 import type { User, Bakery, Subscription, Delivery, Product, PackageType, FaqItem, Achievement, GalleryImage, ChatMessage, WeeklyRevenue, FeedPost, PlatformStats, MarketingCampaign, AppNotification, AIMarketingSuggestion, PaymentGateway, PaymentTransaction, PaymentStats } from '../types';
 import { UserRole, DeliveryStatus } from '../types';
 
-const API_KEY = process.env.API_KEY;
+const API_KEY = import.meta.env.VITE_API_KEY;
 
 const simulateNetwork = <T,>(data: T, delay?: number): Promise<T> => {
   return new Promise(resolve => {
